@@ -1,0 +1,30 @@
+# Ignore output directory (satellite images, timelapses)
+output/
+
+# Ignore POC files
+poc/
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# Environment
+.env
+.env.local
+
+# Documentation
+*.md
+!README.md
+
+# Temporary
+tmp/
+*.tmp
+
+# macOS
+.DS_Store
+

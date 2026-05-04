@@ -1,0 +1,55 @@
+# Go
+bin/
+*.exe
+*.test
+*.out
+server
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Environment & Secrets
+.env
+.env.local
+.env.*.local
+*.pem
+*-key.json
+service-account*.json
+
+# IDE
+.idea/
+.vscode/
+*.swp
+.DS_Store
+
+# Node.js
+node_modules/
+frontend/dist/
+
+# Docker
+docker-compose.override.yml
+
+# Large data files (generated, not committed)
+data/grid.bin
+data/scores_*.bin
+tiles/
+scripts/data/*.tif
+scripts/data/*.npy
+output/
+tmp/
+temp/
+cache/
+*.bak
+
+# Claude Code worktrees
+.claude/worktrees/
+.claude/plans/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Package lock (frontend uses npm)
+package-lock.json

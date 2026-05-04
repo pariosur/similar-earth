@@ -1,0 +1,3227 @@
+{
+  "wheat": {
+    "name": "Wheat",
+    "category": "Cereals",
+    "featured": false,
+    "pins": [
+      {
+        "lat": 37.7187,
+        "lng": -98.5912,
+        "label": "Kansas, USA"
+      },
+      {
+        "lat": 38.5395,
+        "lng": -98.8466,
+        "label": "Kansas, USA"
+      },
+      {
+        "lat": 30.8856,
+        "lng": 74.7208,
+        "label": "Punjab, India"
+      },
+      {
+        "lat": 31.0642,
+        "lng": 75.5374,
+        "label": "Punjab, India"
+      },
+      {
+        "lat": 30.2696,
+        "lng": 74.7406,
+        "label": "Punjab, India"
+      },
+      {
+        "lat": 48.1924,
+        "lng": 1.4321,
+        "label": "Beauce, France"
+      },
+      {
+        "lat": 48.1155,
+        "lng": 1.9158,
+        "label": "Beauce, France"
+      },
+      {
+        "lat": 47.8843,
+        "lng": 1.4442,
+        "label": "Beauce, France"
+      },
+      {
+        "lat": -32.6549,
+        "lng": 147.8883,
+        "label": "NSW, Australia"
+      },
+      {
+        "lat": -35.3883,
+        "lng": -59.8672,
+        "label": "Pampas, Argentina"
+      },
+      {
+        "lat": -35.5673,
+        "lng": -60.8459,
+        "label": "Pampas, Argentina"
+      },
+      {
+        "lat": -34.7723,
+        "lng": -59.8901,
+        "label": "Pampas, Argentina"
+      },
+      {
+        "lat": 36.7309,
+        "lng": 116.5464,
+        "label": "Shandong, China"
+      }
+    ]
+  },
+  "rice": {
+    "name": "Rice",
+    "category": "Cereals",
+    "featured": false,
+    "pins": [
+      {
+        "lat": 9.7943,
+        "lng": 106.1173,
+        "label": "Mekong Delta, Vietnam"
+      },
+      {
+        "lat": 22.9266,
+        "lng": 87.5382,
+        "label": "West Bengal, India"
+      },
+      {
+        "lat": 22.9425,
+        "lng": 87.9872,
+        "label": "West Bengal, India"
+      },
+      {
+        "lat": 32.4151,
+        "lng": 119.7686,
+        "label": "Jiangsu, China"
+      },
+      {
+        "lat": 31.9889,
+        "lng": 120.409,
+        "label": "Jiangsu, China"
+      },
+      {
+        "lat": 15.2847,
+        "lng": 120.8087,
+        "label": "Central Luzon, Philippines"
+      },
+      {
+        "lat": 15.6136,
+        "lng": 120.7203,
+        "label": "Central Luzon, Philippines"
+      },
+      {
+        "lat": 14.7847,
+        "lng": 100.3087,
+        "label": "Chao Phraya, Thailand"
+      },
+      {
+        "lat": 15.1136,
+        "lng": 100.2204,
+        "label": "Chao Phraya, Thailand"
+      }
+    ]
+  },
+  "maize": {
+    "name": "Maize (Corn)",
+    "category": "Cereals",
+    "featured": false,
+    "pins": [
+      {
+        "lat": 41.5742,
+        "lng": -93.2412,
+        "label": "Iowa, USA"
+      },
+      {
+        "lat": 42.231,
+        "lng": -93.4549,
+        "label": "Iowa, USA"
+      },
+      {
+        "lat": 41.5943,
+        "lng": -92.4646,
+        "label": "Iowa, USA"
+      },
+      {
+        "lat": 33.5414,
+        "lng": 114.4312,
+        "label": "Henan, China"
+      },
+      {
+        "lat": 34.4152,
+        "lng": 113.7682,
+        "label": "Henan, China"
+      },
+      {
+        "lat": 33.989,
+        "lng": 114.4087,
+        "label": "Henan, China"
+      },
+      {
+        "lat": -31.5689,
+        "lng": -62.0511,
+        "label": "Cordoba, Argentina"
+      },
+      {
+        "lat": -32.2301,
+        "lng": -63.2218,
+        "label": "Cordoba, Argentina"
+      },
+      {
+        "lat": -31.5913,
+        "lng": -62.6516,
+        "label": "Cordoba, Argentina"
+      },
+      {
+        "lat": 0.2157,
+        "lng": 36.4746,
+        "label": "Rift Valley, Kenya"
+      },
+      {
+        "lat": 48.1939,
+        "lng": -2.9239,
+        "label": "Brittany, France"
+      },
+      {
+        "lat": 47.8859,
+        "lng": -2.9078,
+        "label": "Brittany, France"
+      }
+    ]
+  },
+  "barley": {
+    "name": "Barley",
+    "category": "Cereals",
+    "featured": false,
+    "pins": [
+      {
+        "lat": 48.4447,
+        "lng": 11.1531,
+        "label": "Bavaria, Germany"
+      },
+      {
+        "lat": 50.5459,
+        "lng": -104.8534,
+        "label": "Saskatchewan, Canada"
+      },
+      {
+        "lat": 41.4239,
+        "lng": -2.7779,
+        "label": "Castilla, Spain"
+      },
+      {
+        "lat": -36.4202,
+        "lng": 144.8484,
+        "label": "Victoria, Australia"
+      },
+      {
+        "lat": 26.5689,
+        "lng": 74.051,
+        "label": "Rajasthan, India"
+      },
+      {
+        "lat": 27.2298,
+        "lng": 75.2205,
+        "label": "Rajasthan, India"
+      }
+    ]
+  },
+  "sorghum": {
+    "name": "Sorghum",
+    "category": "Cereals",
+    "featured": false,
+    "pins": [
+      {
+        "lat": 9.5687,
+        "lng": 7.0509,
+        "label": "Nigeria Savanna"
+      },
+      {
+        "lat": 10.2279,
+        "lng": 8.217,
+        "label": "Nigeria Savanna"
+      },
+      {
+        "lat": 18.7289,
+        "lng": 75.7187,
+        "label": "Maharashtra, India"
+      },
+      {
+        "lat": 20.9141,
+        "lng": -103.2294,
+        "label": "Jalisco, Mexico"
+      },
+      {
+        "lat": 20.488,
+        "lng": -102.5898,
+        "label": "Jalisco, Mexico"
+      }
+    ]
+  },
+  "millet": {
+    "name": "Millet",
+    "category": "Cereals",
+    "featured": false,
+    "pins": [
+      {
+        "lat": 26.2297,
+        "lng": 72.2203,
+        "label": "Rajasthan, India"
+      },
+      {
+        "lat": 12.5687,
+        "lng": -6.9491,
+        "label": "Mali"
+      },
+      {
+        "lat": 12.5895,
+        "lng": -6.351,
+        "label": "Mali"
+      },
+      {
+        "lat": 12.383,
+        "lng": 7.7143,
+        "label": "Northern Nigeria"
+      },
+      {
+        "lat": 12.5612,
+        "lng": 8.5346,
+        "label": "Northern Nigeria"
+      },
+      {
+        "lat": 11.7669,
+        "lng": 7.737,
+        "label": "Northern Nigeria"
+      }
+    ]
+  },
+  "soybean": {
+    "name": "Soybean",
+    "category": "Oilseeds",
+    "featured": false,
+    "pins": [
+      {
+        "lat": 39.5692,
+        "lng": -89.936,
+        "label": "Illinois, USA"
+      },
+      {
+        "lat": 40.2328,
+        "lng": -88.4699,
+        "label": "Illinois, USA"
+      },
+      {
+        "lat": -12.5612,
+        "lng": -54.0346,
+        "label": "Mato Grosso, Brazil"
+      },
+      {
+        "lat": -32.0689,
+        "lng": -59.5511,
+        "label": "Santa Fe, Argentina"
+      },
+      {
+        "lat": -32.0914,
+        "lng": -60.1517,
+        "label": "Santa Fe, Argentina"
+      },
+      {
+        "lat": 46.5743,
+        "lng": 126.7559,
+        "label": "Heilongjiang, China"
+      },
+      {
+        "lat": 47.231,
+        "lng": 126.5438,
+        "label": "Heilongjiang, China"
+      },
+      {
+        "lat": 46.5944,
+        "lng": 127.5338,
+        "label": "Heilongjiang, China"
+      },
+      {
+        "lat": -24.0633,
+        "lng": -51.5362,
+        "label": "Parana, Brazil"
+      },
+      {
+        "lat": -23.2688,
+        "lng": -50.7391,
+        "label": "Parana, Brazil"
+      }
+    ]
+  },
+  "oil-palm": {
+    "name": "Oil Palm",
+    "category": "Oilseeds",
+    "featured": false,
+    "pins": []
+  },
+  "sunflower": {
+    "name": "Sunflower",
+    "category": "Oilseeds",
+    "featured": false,
+    "pins": [
+      {
+        "lat": 45.5411,
+        "lng": 38.7236,
+        "label": "Krasnodar, Russia"
+      },
+      {
+        "lat": 45.6753,
+        "lng": 39.5387,
+        "label": "Krasnodar, Russia"
+      },
+      {
+        "lat": 45.0792,
+        "lng": 38.7422,
+        "label": "Krasnodar, Russia"
+      },
+      {
+        "lat": 44.231,
+        "lng": -99.4554,
+        "label": "South Dakota, USA"
+      },
+      {
+        "lat": 15.5688,
+        "lng": 75.5509,
+        "label": "Karnataka, India"
+      },
+      {
+        "lat": 16.2286,
+        "lng": 76.7182,
+        "label": "Karnataka, India"
+      },
+      {
+        "lat": 15.5899,
+        "lng": 76.1494,
+        "label": "Karnataka, India"
+      }
+    ]
+  },
+  "rapeseed": {
+    "name": "Rapeseed (Canola)",
+    "category": "Oilseeds",
+    "featured": false,
+    "pins": [
+      {
+        "lat": 52.2328,
+        "lng": -113.3493,
+        "label": "Alberta, Canada"
+      },
+      {
+        "lat": 54.2832,
+        "lng": 12.7305,
+        "label": "Mecklenburg, Germany"
+      },
+      {
+        "lat": 30.4149,
+        "lng": 112.7689,
+        "label": "Hubei, China"
+      },
+      {
+        "lat": -33.1527,
+        "lng": 148.7403,
+        "label": "NSW, Australia"
+      }
+    ]
+  },
+  "groundnut": {
+    "name": "Groundnut (Peanut)",
+    "category": "Oilseeds",
+    "featured": false,
+    "pins": [
+      {
+        "lat": 31.5689,
+        "lng": -83.9489,
+        "label": "Georgia, USA"
+      },
+      {
+        "lat": 31.5913,
+        "lng": -83.3484,
+        "label": "Georgia, USA"
+      },
+      {
+        "lat": 22.2293,
+        "lng": 71.7194,
+        "label": "Gujarat, India"
+      },
+      {
+        "lat": 21.5905,
+        "lng": 71.1501,
+        "label": "Gujarat, India"
+      },
+      {
+        "lat": 14.0752,
+        "lng": -15.4106,
+        "label": "Senegal"
+      },
+      {
+        "lat": 35.572,
+        "lng": 117.6094,
+        "label": "Shandong, China"
+      },
+      {
+        "lat": 36.2292,
+        "lng": 117.4372,
+        "label": "Shandong, China"
+      },
+      {
+        "lat": 35.5918,
+        "lng": 118.2297,
+        "label": "Shandong, China"
+      },
+      {
+        "lat": 10.5687,
+        "lng": 7.5509,
+        "label": "Northern Nigeria"
+      },
+      {
+        "lat": 10.5893,
+        "lng": 8.1488,
+        "label": "Northern Nigeria"
+      }
+    ]
+  },
+  "coconut": {
+    "name": "Coconut",
+    "category": "Oilseeds",
+    "featured": false,
+    "pins": []
+  },
+  "tea": {
+    "name": "Tea",
+    "category": "Beverages",
+    "featured": false,
+    "pins": [
+      {
+        "lat": 26.0409,
+        "lng": 93.9313,
+        "label": "Assam, India"
+      },
+      {
+        "lat": 26.4885,
+        "lng": 93.9096,
+        "label": "Assam, India"
+      }
+    ]
+  },
+  "tobacco": {
+    "name": "Tobacco",
+    "category": "Beverages",
+    "featured": false,
+    "pins": [
+      {
+        "lat": 24.5689,
+        "lng": 102.051,
+        "label": "Yunnan, China"
+      },
+      {
+        "lat": 25.2296,
+        "lng": 103.2201,
+        "label": "Yunnan, China"
+      },
+      {
+        "lat": -13.4414,
+        "lng": 34.1757,
+        "label": "Malawi Central"
+      }
+    ]
+  },
+  "banana": {
+    "name": "Banana",
+    "category": "Fruits",
+    "featured": false,
+    "pins": [
+      {
+        "lat": 10.4417,
+        "lng": 77.4863,
+        "label": "Tamil Nadu, India"
+      }
+    ]
+  },
+  "mango": {
+    "name": "Mango",
+    "category": "Fruits",
+    "featured": false,
+    "pins": [
+      {
+        "lat": 27.5384,
+        "lng": 80.5738,
+        "label": "UP, India"
+      },
+      {
+        "lat": 27.0764,
+        "lng": 80.5909,
+        "label": "UP, India"
+      },
+      {
+        "lat": 24.9211,
+        "lng": -107.6704,
+        "label": "Sinaloa, Mexico"
+      },
+      {
+        "lat": 24.4427,
+        "lng": -107.0755,
+        "label": "Sinaloa, Mexico"
+      }
+    ]
+  },
+  "citrus": {
+    "name": "Citrus",
+    "category": "Fruits",
+    "featured": false,
+    "pins": [
+      {
+        "lat": -21.0688,
+        "lng": -48.051,
+        "label": "Sao Paulo, Brazil"
+      },
+      {
+        "lat": -33.6142,
+        "lng": 18.8907,
+        "label": "Western Cape, South Africa"
+      },
+      {
+        "lat": -33.2948,
+        "lng": 19.1752,
+        "label": "Western Cape, South Africa"
+      }
+    ]
+  },
+  "apple": {
+    "name": "Apple",
+    "category": "Fruits",
+    "featured": false,
+    "pins": [
+      {
+        "lat": 35.4152,
+        "lng": 108.268,
+        "label": "Shaanxi, China"
+      }
+    ]
+  },
+  "pineapple": {
+    "name": "Pineapple",
+    "category": "Fruits",
+    "featured": false,
+    "pins": [
+      {
+        "lat": -5.1133,
+        "lng": 105.2794,
+        "label": "Lampung, Indonesia"
+      }
+    ]
+  },
+  "sugarbeet": {
+    "name": "Sugar Beet",
+    "category": "Sugar & Fiber",
+    "featured": false,
+    "pins": [
+      {
+        "lat": 49.2845,
+        "lng": 2.0383,
+        "label": "Picardy, France"
+      },
+      {
+        "lat": 49.2961,
+        "lng": 2.4885,
+        "label": "Picardy, France"
+      },
+      {
+        "lat": 47.4301,
+        "lng": -96.392,
+        "label": "Minnesota, USA"
+      },
+      {
+        "lat": 47.445,
+        "lng": -95.7711,
+        "label": "Minnesota, USA"
+      },
+      {
+        "lat": 48.8859,
+        "lng": 10.5924,
+        "label": "Bavaria, Germany"
+      },
+      {
+        "lat": 44.9268,
+        "lng": 38.0512,
+        "label": "Krasnodar, Russia"
+      },
+      {
+        "lat": 45.424,
+        "lng": 39.2232,
+        "label": "Krasnodar, Russia"
+      },
+      {
+        "lat": 44.9448,
+        "lng": 38.6525,
+        "label": "Krasnodar, Russia"
+      }
+    ]
+  },
+  "cotton": {
+    "name": "Cotton",
+    "category": "Sugar & Fiber",
+    "featured": false,
+    "pins": [
+      {
+        "lat": 22.5689,
+        "lng": 71.051,
+        "label": "Gujarat, India"
+      },
+      {
+        "lat": 23.2294,
+        "lng": 72.2196,
+        "label": "Gujarat, India"
+      },
+      {
+        "lat": 22.5906,
+        "lng": 71.6503,
+        "label": "Gujarat, India"
+      },
+      {
+        "lat": 13.9265,
+        "lng": 32.5382,
+        "label": "Gezira, Sudan"
+      },
+      {
+        "lat": 14.4209,
+        "lng": 33.4128,
+        "label": "Gezira, Sudan"
+      },
+      {
+        "lat": 13.9419,
+        "lng": 32.9866,
+        "label": "Gezira, Sudan"
+      }
+    ]
+  },
+  "potato": {
+    "name": "Potato",
+    "category": "Roots & Tubers",
+    "featured": false,
+    "pins": [
+      {
+        "lat": 27.5384,
+        "lng": 79.5738,
+        "label": "UP, India"
+      },
+      {
+        "lat": 27.6723,
+        "lng": 80.2287,
+        "label": "UP, India"
+      },
+      {
+        "lat": 27.0764,
+        "lng": 79.5909,
+        "label": "UP, India"
+      },
+      {
+        "lat": 52.6938,
+        "lng": 9.5775,
+        "label": "Lower Saxony, Germany"
+      },
+      {
+        "lat": 52.3858,
+        "lng": 9.593,
+        "label": "Lower Saxony, Germany"
+      }
+    ]
+  },
+  "cassava": {
+    "name": "Cassava",
+    "category": "Roots & Tubers",
+    "featured": false,
+    "pins": [
+      {
+        "lat": 14.9206,
+        "lng": 101.8303,
+        "label": "Nakhon Ratchasima, Thailand"
+      },
+      {
+        "lat": 14.442,
+        "lng": 102.4254,
+        "label": "Nakhon Ratchasima, Thailand"
+      },
+      {
+        "lat": -23.5381,
+        "lng": -51.0729,
+        "label": "Parana, Brazil"
+      },
+      {
+        "lat": -23.0761,
+        "lng": -51.0904,
+        "label": "Parana, Brazil"
+      },
+      {
+        "lat": -14.5898,
+        "lng": 35.3507,
+        "label": "Mozambique"
+      }
+    ]
+  },
+  "sweet-potato": {
+    "name": "Sweet Potato",
+    "category": "Roots & Tubers",
+    "featured": false,
+    "pins": [
+      {
+        "lat": 35.5389,
+        "lng": -78.4242,
+        "label": "North Carolina, USA"
+      },
+      {
+        "lat": 35.6728,
+        "lng": -77.7704,
+        "label": "North Carolina, USA"
+      },
+      {
+        "lat": 1.4199,
+        "lng": 32.9115,
+        "label": "Uganda"
+      }
+    ]
+  },
+  "beans": {
+    "name": "Beans",
+    "category": "Pulses",
+    "featured": false,
+    "pins": [
+      {
+        "lat": 43.4239,
+        "lng": -84.7774,
+        "label": "Michigan, USA"
+      },
+      {
+        "lat": -23.5381,
+        "lng": -50.5729,
+        "label": "Parana, Brazil"
+      },
+      {
+        "lat": -23.6719,
+        "lng": -51.2283,
+        "label": "Parana, Brazil"
+      },
+      {
+        "lat": -23.0761,
+        "lng": -50.5904,
+        "label": "Parana, Brazil"
+      },
+      {
+        "lat": -1.794,
+        "lng": 29.6762,
+        "label": "Rwanda"
+      },
+      {
+        "lat": 20.5404,
+        "lng": -102.5687,
+        "label": "Jalisco, Mexico"
+      },
+      {
+        "lat": 14.5687,
+        "lng": 75.5382,
+        "label": "Karnataka, India"
+      }
+    ]
+  },
+  "lentils": {
+    "name": "Lentils",
+    "category": "Pulses",
+    "featured": false,
+    "pins": [
+      {
+        "lat": 51.2329,
+        "lng": -106.3489,
+        "label": "Saskatchewan, Canada"
+      },
+      {
+        "lat": 23.5689,
+        "lng": 77.051,
+        "label": "MP, India"
+      },
+      {
+        "lat": 24.2295,
+        "lng": 78.2198,
+        "label": "MP, India"
+      },
+      {
+        "lat": 23.5907,
+        "lng": 77.6504,
+        "label": "MP, India"
+      },
+      {
+        "lat": 38.039,
+        "lng": 39.5765,
+        "label": "Southeast Turkey"
+      },
+      {
+        "lat": 38.1729,
+        "lng": 40.2299,
+        "label": "Southeast Turkey"
+      },
+      {
+        "lat": 37.577,
+        "lng": 39.5924,
+        "label": "Southeast Turkey"
+      },
+      {
+        "lat": -33.0413,
+        "lng": 138.5688,
+        "label": "South Australia"
+      },
+      {
+        "lat": -33.489,
+        "lng": 138.5912,
+        "label": "South Australia"
+      }
+    ]
+  },
+  "chickpea": {
+    "name": "Chickpea",
+    "category": "Pulses",
+    "featured": false,
+    "pins": [
+      {
+        "lat": 23.8848,
+        "lng": 77.7181,
+        "label": "MP, India"
+      },
+      {
+        "lat": 23.2688,
+        "lng": 77.7391,
+        "label": "MP, India"
+      },
+      {
+        "lat": 38.039,
+        "lng": 32.5765,
+        "label": "Konya, Turkey"
+      },
+      {
+        "lat": 38.1729,
+        "lng": 33.2299,
+        "label": "Konya, Turkey"
+      },
+      {
+        "lat": 37.577,
+        "lng": 32.5924,
+        "label": "Konya, Turkey"
+      },
+      {
+        "lat": 37.7949,
+        "lng": -4.675,
+        "label": "Cordoba, Spain"
+      }
+    ]
+  },
+  "cashew": {
+    "name": "Cashew",
+    "category": "Nuts",
+    "featured": false,
+    "pins": []
+  },
+  "almond": {
+    "name": "Almond",
+    "category": "Nuts",
+    "featured": false,
+    "pins": [
+      {
+        "lat": 36.4284,
+        "lng": -120.0413,
+        "label": "California, USA"
+      },
+      {
+        "lat": 36.4431,
+        "lng": -119.5767,
+        "label": "California, USA"
+      },
+      {
+        "lat": -33.5414,
+        "lng": 138.5688,
+        "label": "South Australia"
+      }
+    ]
+  },
+  "pistachio": {
+    "name": "Pistachio",
+    "category": "Nuts",
+    "featured": false,
+    "pins": [
+      {
+        "lat": 35.9284,
+        "lng": -119.5412,
+        "label": "California, USA"
+      },
+      {
+        "lat": 29.9428,
+        "lng": 56.9878,
+        "label": "Kerman, Iran"
+      },
+      {
+        "lat": 37.1923,
+        "lng": 36.9303,
+        "label": "Gaziantep, Turkey"
+      }
+    ]
+  },
+  "vanilla": {
+    "name": "Vanilla",
+    "category": "Spices",
+    "featured": false,
+    "pins": [
+      {
+        "lat": 0.4409,
+        "lng": 31.3238,
+        "label": "Uganda"
+      }
+    ]
+  },
+  "pepper": {
+    "name": "Black Pepper",
+    "category": "Spices",
+    "featured": false,
+    "pins": []
+  },
+  "olive": {
+    "name": "Olive",
+    "category": "Other",
+    "featured": false,
+    "pins": [
+      {
+        "lat": 41.0391,
+        "lng": 17.0774,
+        "label": "Puglia, Italy"
+      },
+      {
+        "lat": -32.9219,
+        "lng": -68.4152,
+        "label": "Mendoza, Argentina"
+      }
+    ]
+  },
+  "rubber": {
+    "name": "Rubber",
+    "category": "Other",
+    "featured": false,
+    "pins": []
+  },
+  "avocado": {
+    "name": "Hass Avocado",
+    "category": "Agriculture",
+    "featured": true,
+    "pins": [
+      {
+        "lat": 36.7823,
+        "lng": -4.0512,
+        "label": "La Axarquia, Spain"
+      },
+      {
+        "lat": 36.7845,
+        "lng": -4.0892,
+        "label": "Costa del Sol, Spain"
+      },
+      {
+        "lat": -0.7234,
+        "lng": 37.1523,
+        "label": "Murang"
+      },
+      {
+        "lat": -0.4512,
+        "lng": 37.2345,
+        "label": "Sagana Valley, Kenya"
+      },
+      {
+        "lat": 34.3972,
+        "lng": -119.4911,
+        "label": "Carpinteria, USA"
+      },
+      {
+        "lat": 33.32,
+        "lng": -116.99,
+        "label": "Pauma Valley, USA"
+      },
+      {
+        "lat": 5.7706,
+        "lng": -75.7681,
+        "label": "Cartama, Colombia"
+      },
+      {
+        "lat": 5.7823,
+        "lng": -75.7234,
+        "label": "Westfalia, Colombia"
+      },
+      {
+        "lat": 5.6234,
+        "lng": -75.6912,
+        "label": "Fresquita Farm, Colombia"
+      },
+      {
+        "lat": 5.5703,
+        "lng": -75.4028,
+        "label": "Rionegro, Colombia"
+      },
+      {
+        "lat": -23.7845,
+        "lng": 30.2134,
+        "label": "Tzaneen, South Africa"
+      },
+      {
+        "lat": -23.0456,
+        "lng": 30.3123,
+        "label": "Levubu Valley, South Africa"
+      },
+      {
+        "lat": -25.0234,
+        "lng": 31.1678,
+        "label": "Hazyview, South Africa"
+      },
+      {
+        "lat": 19.3208,
+        "lng": -101.6803,
+        "label": "Uruapan, Mexico"
+      },
+      {
+        "lat": 19.35,
+        "lng": -102.3667,
+        "label": "Tancitaro, Mexico"
+      },
+      {
+        "lat": 19.8608,
+        "lng": -103.5939,
+        "label": "Jalisco Highlands, Mexico"
+      },
+      {
+        "lat": -8.1,
+        "lng": -78.95,
+        "label": "Chavimochic, Peru"
+      },
+      {
+        "lat": -14.08,
+        "lng": -75.7019,
+        "label": "Ica Valley, Peru"
+      },
+      {
+        "lat": -32.9167,
+        "lng": -71.2136,
+        "label": "Quillota, Chile"
+      },
+      {
+        "lat": -32.2558,
+        "lng": -70.9275,
+        "label": "Petorca, Chile"
+      },
+      {
+        "lat": 32.9494,
+        "lng": 35.1072,
+        "label": "Western Galilee, Israel"
+      },
+      {
+        "lat": 14.6667,
+        "lng": -90.6458,
+        "label": "Guatemala Highlands, Guatemala"
+      },
+      {
+        "lat": 18.5506,
+        "lng": -70.4942,
+        "label": "San Jose de Ocoa, Dominican Republic"
+      },
+      {
+        "lat": -9.3261,
+        "lng": 34.7814,
+        "label": "Njombe Highlands, Tanzania"
+      }
+    ],
+    "description": "Known Hass avocado-growing regions. Similarity based on satellite-observed land patterns.",
+    "top_matches": [
+      {
+        "lat": 35.0792,
+        "lng": 25.3055,
+        "score": 0.8631,
+        "best_pin_index": 1,
+        "name": "Arkalochori Municipal Unit, Greece",
+        "similar_to": "Costa del Sol, Spain"
+      },
+      {
+        "lat": 37.343,
+        "lng": 15.0108,
+        "score": 0.8459,
+        "best_pin_index": 1,
+        "name": "Lentini, Italy",
+        "similar_to": "Costa del Sol, Spain"
+      },
+      {
+        "lat": -6.7643,
+        "lng": -79.7434,
+        "score": 0.8354,
+        "best_pin_index": 16,
+        "name": "Pomalca, Peru",
+        "similar_to": "Chavimochic, Peru"
+      },
+      {
+        "lat": 3.9975,
+        "lng": -75.4675,
+        "score": 0.8337,
+        "best_pin_index": 9,
+        "name": "San Antonio, Colombia",
+        "similar_to": "Rionegro, Colombia"
+      },
+      {
+        "lat": 19.6462,
+        "lng": -72.4851,
+        "score": 0.8334,
+        "best_pin_index": 21,
+        "name": "Commune Plaisance, Haiti",
+        "similar_to": "Guatemala Highlands, Guatemala"
+      },
+      {
+        "lat": 4.9138,
+        "lng": -74.4614,
+        "score": 0.8308,
+        "best_pin_index": 6,
+        "name": "Alb\u00e1n, Colombia",
+        "similar_to": "Cartama, Colombia"
+      },
+      {
+        "lat": 20.5804,
+        "lng": -101.2311,
+        "score": 0.8225,
+        "best_pin_index": 15,
+        "name": "Salamanca, Mexico",
+        "similar_to": "Jalisco Highlands, Mexico"
+      },
+      {
+        "lat": 35.8518,
+        "lng": -5.3809,
+        "score": 0.8168,
+        "best_pin_index": 0,
+        "name": "Belyounech \u2d31\u2d4d\u2d62\u2d53\u2d4f\u2d30\u2d5b \u0628\u0644\u064a\u0648\u0646\u0634, Morocco",
+        "similar_to": "La Axarquia, Spain"
+      },
+      {
+        "lat": 36.7141,
+        "lng": 4.9677,
+        "score": 0.8151,
+        "best_pin_index": 0,
+        "name": "Oued Ghir, Algeria",
+        "similar_to": "La Axarquia, Spain"
+      },
+      {
+        "lat": 20.275,
+        "lng": -102.399,
+        "score": 0.8064,
+        "best_pin_index": 15,
+        "name": "Tanhuato, Mexico",
+        "similar_to": "Jalisco Highlands, Mexico"
+      }
+    ]
+  },
+  "coffee": {
+    "name": "Specialty Coffee",
+    "category": "Agriculture",
+    "featured": true,
+    "pins": [
+      {
+        "lat": 6.1234,
+        "lng": 38.2156,
+        "label": "Yirgacheffe, Ethiopia"
+      },
+      {
+        "lat": 6.1567,
+        "lng": 38.1923,
+        "label": "Idido, Ethiopia"
+      },
+      {
+        "lat": 6.4234,
+        "lng": 38.8123,
+        "label": "Sidama, Ethiopia"
+      },
+      {
+        "lat": 5.7823,
+        "lng": 38.8912,
+        "label": "Guji, Ethiopia"
+      },
+      {
+        "lat": 9.2845,
+        "lng": 42.1534,
+        "label": "Harrar, Ethiopia"
+      },
+      {
+        "lat": 1.8234,
+        "lng": -76.0412,
+        "label": "Finca Monteblanco, Colombia"
+      },
+      {
+        "lat": 1.7912,
+        "lng": -75.8534,
+        "label": "Finca La Suiza, Colombia"
+      },
+      {
+        "lat": 1.8678,
+        "lng": -76.0823,
+        "label": "Pitalito, Colombia"
+      },
+      {
+        "lat": 2.4012,
+        "lng": -75.8456,
+        "label": "La Plata, Colombia"
+      },
+      {
+        "lat": 1.4123,
+        "lng": -77.1234,
+        "label": "Buesaco, Colombia"
+      },
+      {
+        "lat": 14.5678,
+        "lng": -90.7512,
+        "label": "Antigua Valley, Guatemala"
+      },
+      {
+        "lat": 15.3456,
+        "lng": -91.5023,
+        "label": "Huehuetenango, Guatemala"
+      },
+      {
+        "lat": 8.7945,
+        "lng": -82.4678,
+        "label": "La Esmeralda, Panama"
+      },
+      {
+        "lat": 14.6234,
+        "lng": -91.1523,
+        "label": "Lake Atitlan, Guatemala"
+      },
+      {
+        "lat": -0.3823,
+        "lng": 36.9823,
+        "label": "Nyeri, Kenya"
+      },
+      {
+        "lat": -0.4678,
+        "lng": 37.3012,
+        "label": "Kirinyaga, Kenya"
+      },
+      {
+        "lat": -1.1234,
+        "lng": 36.8012,
+        "label": "Kiambu, Kenya"
+      },
+      {
+        "lat": -0.4912,
+        "lng": 37.4523,
+        "label": "Embu, Kenya"
+      },
+      {
+        "lat": -0.7234,
+        "lng": 37.0823,
+        "label": "Murang"
+      },
+      {
+        "lat": 4.6512,
+        "lng": 96.8234,
+        "label": "Gayo Highland, Indonesia"
+      },
+      {
+        "lat": 2.5678,
+        "lng": 98.9012,
+        "label": "Lintong, Indonesia"
+      },
+      {
+        "lat": -2.9823,
+        "lng": 119.8234,
+        "label": "Toraja, Indonesia"
+      },
+      {
+        "lat": -8.0678,
+        "lng": 114.2012,
+        "label": "Ijen Plateau, Indonesia"
+      },
+      {
+        "lat": -8.2234,
+        "lng": 115.3678,
+        "label": "Kintamani, Indonesia"
+      }
+    ],
+    "description": "Specialty coffee origins across Ethiopia, Colombia, Kenya, Guatemala, Indonesia.",
+    "top_matches": [
+      {
+        "lat": 7.7345,
+        "lng": 36.804,
+        "score": 0.8632,
+        "best_pin_index": 1,
+        "name": "Jimma, Ethiopia",
+        "similar_to": "Idido, Ethiopia"
+      },
+      {
+        "lat": 8.6687,
+        "lng": 40.523,
+        "score": 0.8543,
+        "best_pin_index": 2,
+        "name": "Ethiopia",
+        "similar_to": "Sidama, Ethiopia"
+      },
+      {
+        "lat": 7.1955,
+        "lng": 37.8281,
+        "score": 0.8528,
+        "best_pin_index": 2,
+        "name": "Ethiopia",
+        "similar_to": "Sidama, Ethiopia"
+      },
+      {
+        "lat": -0.0808,
+        "lng": 35.4206,
+        "score": 0.8381,
+        "best_pin_index": 1,
+        "name": "Kamasian ward, Kenya",
+        "similar_to": "Idido, Ethiopia"
+      },
+      {
+        "lat": 4.5006,
+        "lng": -74.4254,
+        "score": 0.8271,
+        "best_pin_index": 8,
+        "name": "Viot\u00e1, Colombia",
+        "similar_to": "La Plata, Colombia"
+      },
+      {
+        "lat": 3.4226,
+        "lng": -74.8746,
+        "score": 0.8261,
+        "best_pin_index": 8,
+        "name": "Alpujarra, Colombia",
+        "similar_to": "La Plata, Colombia"
+      },
+      {
+        "lat": 7.5728,
+        "lng": -72.521,
+        "score": 0.8234,
+        "best_pin_index": 6,
+        "name": "Ragonvalia, Colombia",
+        "similar_to": "Finca La Suiza, Colombia"
+      },
+      {
+        "lat": -4.4467,
+        "lng": -79.4021,
+        "score": 0.8225,
+        "best_pin_index": 9,
+        "name": "El Ingenio, Ecuador",
+        "similar_to": "Buesaco, Colombia"
+      },
+      {
+        "lat": -0.6198,
+        "lng": 28.9527,
+        "score": 0.8164,
+        "best_pin_index": 19,
+        "name": "Walikale, Democratic Republic of the Congo",
+        "similar_to": "Gayo Highland, Indonesia"
+      },
+      {
+        "lat": -5.6684,
+        "lng": -79.0787,
+        "score": 0.8142,
+        "best_pin_index": 9,
+        "name": "Chontal\u00ed, Peru",
+        "similar_to": "Buesaco, Colombia"
+      }
+    ]
+  },
+  "wine-grapes": {
+    "name": "Wine Grapes",
+    "category": "Agriculture",
+    "featured": true,
+    "pins": [
+      {
+        "lat": 45.1864,
+        "lng": -0.7517,
+        "label": "Lafite Rothschild, France"
+      },
+      {
+        "lat": 45.0412,
+        "lng": -0.6678,
+        "label": "Chateau Margaux, France"
+      },
+      {
+        "lat": 45.1634,
+        "lng": -0.7823,
+        "label": "Chateau Latour, France"
+      },
+      {
+        "lat": 47.1623,
+        "lng": 4.9512,
+        "label": "Romanee-Conti, France"
+      },
+      {
+        "lat": 41.1423,
+        "lng": -7.5234,
+        "label": "Quinta do Vallado, Portugal"
+      },
+      {
+        "lat": 38.3812,
+        "lng": -7.5823,
+        "label": "Herdade do Esporao, Portugal"
+      },
+      {
+        "lat": 41.1734,
+        "lng": -7.4512,
+        "label": "Niepoort, Portugal"
+      },
+      {
+        "lat": 41.1234,
+        "lng": -7.5012,
+        "label": "Symington, Portugal"
+      },
+      {
+        "lat": 41.8234,
+        "lng": -8.3923,
+        "label": "Aphros Wines, Portugal"
+      },
+      {
+        "lat": 43.2412,
+        "lng": 10.6234,
+        "label": "Sassicaia, Italy"
+      },
+      {
+        "lat": 43.4823,
+        "lng": 11.2345,
+        "label": "Tignanello, Italy"
+      },
+      {
+        "lat": 43.0234,
+        "lng": 11.4678,
+        "label": "Biondi-Santi, Italy"
+      },
+      {
+        "lat": 44.5923,
+        "lng": 7.9923,
+        "label": "Cascina Francia, Italy"
+      },
+      {
+        "lat": 44.7219,
+        "lng": 8.0733,
+        "label": "Gaja, Italy"
+      },
+      {
+        "lat": -34.5834,
+        "lng": 139.0234,
+        "label": "Hill of Grace, Australia"
+      },
+      {
+        "lat": -35.2008,
+        "lng": 138.5433,
+        "label": "Clarendon Hills, Australia"
+      },
+      {
+        "lat": -33.8234,
+        "lng": 138.6034,
+        "label": "Jim Barry, Australia"
+      },
+      {
+        "lat": -33.4523,
+        "lng": -69.2734,
+        "label": "Catena Zapata, Argentina"
+      },
+      {
+        "lat": -39.025,
+        "lng": -67.6614,
+        "label": "Bodega Noemia, Argentina"
+      },
+      {
+        "lat": -33.0289,
+        "lng": -68.9581,
+        "label": "Terrazas de los Andes, Argentina"
+      },
+      {
+        "lat": -33.4734,
+        "lng": -69.1823,
+        "label": "Achaval Ferrer, Argentina"
+      },
+      {
+        "lat": -33.5823,
+        "lng": -69.0923,
+        "label": "Cheval des Andes, Argentina"
+      }
+    ],
+    "description": "Premium wine regions in France, Portugal, Italy, Australia, Argentina.",
+    "top_matches": [
+      {
+        "lat": -35.169,
+        "lng": -68.4786,
+        "score": 0.8901,
+        "best_pin_index": 14,
+        "name": "Distrito Rama Ca\u00edda, Argentina",
+        "similar_to": "Hill of Grace, Australia"
+      },
+      {
+        "lat": 42.5532,
+        "lng": -2.3805,
+        "score": 0.8818,
+        "best_pin_index": 6,
+        "name": "Viana, Spain",
+        "similar_to": "Niepoort, Portugal"
+      },
+      {
+        "lat": -32.0788,
+        "lng": -68.8559,
+        "score": 0.8816,
+        "best_pin_index": 14,
+        "name": "Argentina",
+        "similar_to": "Hill of Grace, Australia"
+      },
+      {
+        "lat": 39.6966,
+        "lng": -6.6924,
+        "score": 0.8695,
+        "best_pin_index": 4,
+        "name": "Navas del Madro\u00f1o, Spain",
+        "similar_to": "Quinta do Vallado, Portugal"
+      },
+      {
+        "lat": 38.4748,
+        "lng": -3.8717,
+        "score": 0.8641,
+        "best_pin_index": 6,
+        "name": "San Lorenzo de Calatrava, Spain",
+        "similar_to": "Niepoort, Portugal"
+      },
+      {
+        "lat": 37.846,
+        "lng": 28.5395,
+        "score": 0.8633,
+        "best_pin_index": 3,
+        "name": "Karacasu, Turkey",
+        "similar_to": "Romanee-Conti, France"
+      },
+      {
+        "lat": -38.0616,
+        "lng": 141.5475,
+        "score": 0.8574,
+        "best_pin_index": 13,
+        "name": "Australia",
+        "similar_to": "Gaja, Italy"
+      },
+      {
+        "lat": -37.2891,
+        "lng": 140.8289,
+        "score": 0.8552,
+        "best_pin_index": 13,
+        "name": "Wattle Range Council, Australia",
+        "similar_to": "Gaja, Italy"
+      },
+      {
+        "lat": 37.3609,
+        "lng": 22.7184,
+        "score": 0.8512,
+        "best_pin_index": 3,
+        "name": "Municipality of North Kynouria, Greece",
+        "similar_to": "Romanee-Conti, France"
+      },
+      {
+        "lat": 39.7325,
+        "lng": 26.2039,
+        "score": 0.8426,
+        "best_pin_index": 4,
+        "name": "Ezine, Turkey",
+        "similar_to": "Quinta do Vallado, Portugal"
+      }
+    ]
+  },
+  "cacao": {
+    "name": "Cacao",
+    "category": "Agriculture",
+    "featured": true,
+    "pins": [
+      {
+        "lat": -1.5623,
+        "lng": -79.7012,
+        "label": "Hacienda Victoria, Ecuador"
+      },
+      {
+        "lat": -0.8234,
+        "lng": -80.1678,
+        "label": "Calceta, Ecuador"
+      },
+      {
+        "lat": 19.1923,
+        "lng": -69.8734,
+        "label": "FUNDOPO, Dominican Republic"
+      },
+      {
+        "lat": 6.9234,
+        "lng": -73.1234,
+        "label": "Casa Luker, Colombia"
+      },
+      {
+        "lat": -13.6523,
+        "lng": 48.4234,
+        "label": "Sambirano Valley, Madagascar"
+      },
+      {
+        "lat": -5.0823,
+        "lng": -80.1234,
+        "label": "Chulucanas, Peru"
+      },
+      {
+        "lat": -6.5123,
+        "lng": -76.3234,
+        "label": "Oro Verde, Peru"
+      },
+      {
+        "lat": -3.5923,
+        "lng": -80.4234,
+        "label": "Corrales Valley, Peru"
+      },
+      {
+        "lat": -12.8923,
+        "lng": -72.7012,
+        "label": "La Convencion, Peru"
+      }
+    ],
+    "description": "Cacao-producing areas in Ecuador, Dominican Republic, Colombia, Peru, Madagascar.",
+    "top_matches": [
+      {
+        "lat": 18.6939,
+        "lng": -68.9277,
+        "score": 0.8661,
+        "best_pin_index": 2,
+        "name": "El Seibo, Dominican Republic",
+        "similar_to": "FUNDOPO, Dominican Republic"
+      },
+      {
+        "lat": 18.4424,
+        "lng": -66.9514,
+        "score": 0.8405,
+        "best_pin_index": 2,
+        "name": "Quebradillas, United States",
+        "similar_to": "FUNDOPO, Dominican Republic"
+      },
+      {
+        "lat": -6.2972,
+        "lng": -79.1326,
+        "score": 0.8184,
+        "best_pin_index": 8,
+        "name": "Querocoto, Peru",
+        "similar_to": "La Convencion, Peru"
+      },
+      {
+        "lat": -12.1542,
+        "lng": -74.4973,
+        "score": 0.8107,
+        "best_pin_index": 8,
+        "name": "Cochabamba, Peru",
+        "similar_to": "La Convencion, Peru"
+      },
+      {
+        "lat": 0.1347,
+        "lng": -79.3662,
+        "score": 0.7742,
+        "best_pin_index": 1,
+        "name": "La Uni\u00f3n, Ecuador",
+        "similar_to": "Calceta, Ecuador"
+      },
+      {
+        "lat": -11.3278,
+        "lng": -74.5692,
+        "score": 0.7662,
+        "best_pin_index": 6,
+        "name": "Mazamari, Peru",
+        "similar_to": "Oro Verde, Peru"
+      },
+      {
+        "lat": -16.3044,
+        "lng": 45.5176,
+        "score": 0.7444,
+        "best_pin_index": 4,
+        "name": "District de Soalala, Madagascar",
+        "similar_to": "Sambirano Valley, Madagascar"
+      },
+      {
+        "lat": -19.0533,
+        "lng": 35.0073,
+        "score": 0.7431,
+        "best_pin_index": 4,
+        "name": "Mozambique",
+        "similar_to": "Sambirano Valley, Madagascar"
+      },
+      {
+        "lat": -5.0755,
+        "lng": 105.3454,
+        "score": 0.6932,
+        "best_pin_index": 1,
+        "name": "Metro, Indonesia",
+        "similar_to": "Calceta, Ecuador"
+      },
+      {
+        "lat": 4.6623,
+        "lng": -59.9985,
+        "score": 0.6892,
+        "best_pin_index": 3,
+        "name": "Maripari River - Kurukabaru, Guyana",
+        "similar_to": "Casa Luker, Colombia"
+      }
+    ]
+  },
+  "macadamia": {
+    "name": "Macadamia",
+    "category": "Agriculture",
+    "featured": true,
+    "pins": [
+      {
+        "lat": -24.8444,
+        "lng": 152.3611,
+        "label": "Goodwood Farm, Australia"
+      },
+      {
+        "lat": -24.9612,
+        "lng": 152.3012,
+        "label": "Elliott River, Australia"
+      },
+      {
+        "lat": -25.2234,
+        "lng": 152.2834,
+        "label": "Hinkler Park, Australia"
+      },
+      {
+        "lat": -28.8511,
+        "lng": 153.4553,
+        "label": "Alstonville, Australia"
+      },
+      {
+        "lat": 19.4923,
+        "lng": -155.9012,
+        "label": "MacFarms, Hawaii"
+      },
+      {
+        "lat": 20.0823,
+        "lng": -155.4678,
+        "label": "Hamakua, Hawaii"
+      },
+      {
+        "lat": 20.0634,
+        "lng": -155.4234,
+        "label": "Ahualoa, Hawaii"
+      },
+      {
+        "lat": -36.834167,
+        "lng": 175.774722,
+        "label": "Cathedral Cove, New Zealand"
+      },
+      {
+        "lat": -0.5012,
+        "lng": 37.4823,
+        "label": "Embu, Kenya"
+      },
+      {
+        "lat": -0.4623,
+        "lng": 37.2123,
+        "label": "Sagana Valley, Kenya"
+      },
+      {
+        "lat": -0.8012,
+        "lng": 37.0234,
+        "label": "Murang"
+      },
+      {
+        "lat": 25.0823,
+        "lng": 99.2234,
+        "label": "Baoshan, China"
+      },
+      {
+        "lat": 22.821111,
+        "lng": 101.040833,
+        "label": "Pu"
+      },
+      {
+        "lat": 22.0412,
+        "lng": 100.7923,
+        "label": "Xishuangbanna, China"
+      }
+    ],
+    "description": "Macadamia farms in Australia, Hawaii, Kenya, China, New Zealand.",
+    "top_matches": [
+      {
+        "lat": -0.7097,
+        "lng": 35.3667,
+        "score": 0.8034,
+        "best_pin_index": 6,
+        "name": "Bomet Central, Kenya",
+        "similar_to": "Ahualoa, Hawaii"
+      },
+      {
+        "lat": -3.1711,
+        "lng": 35.7979,
+        "score": 0.8004,
+        "best_pin_index": 6,
+        "name": "Tanzania",
+        "similar_to": "Ahualoa, Hawaii"
+      },
+      {
+        "lat": -3.2609,
+        "lng": 37.2172,
+        "score": 0.7961,
+        "best_pin_index": 7,
+        "name": "Tanzania",
+        "similar_to": "Cathedral Cove, New Zealand"
+      },
+      {
+        "lat": 21.6763,
+        "lng": 99.2189,
+        "score": 0.7912,
+        "best_pin_index": 9,
+        "name": "Mong Khet Township, Myanmar",
+        "similar_to": "Sagana Valley, Kenya"
+      },
+      {
+        "lat": 23.1676,
+        "lng": 97.1348,
+        "score": 0.7832,
+        "best_pin_index": 9,
+        "name": "Mantong Township, Myanmar",
+        "similar_to": "Sagana Valley, Kenya"
+      },
+      {
+        "lat": -27.5154,
+        "lng": 153.2256,
+        "score": 0.783,
+        "best_pin_index": 1,
+        "name": "Brisbane, Australia",
+        "similar_to": "Elliott River, Australia"
+      },
+      {
+        "lat": 13.9508,
+        "lng": -60.9148,
+        "score": 0.7762,
+        "best_pin_index": 2,
+        "name": "Saint Lucia",
+        "similar_to": "Hinkler Park, Australia"
+      },
+      {
+        "lat": 18.2089,
+        "lng": -77.2461,
+        "score": 0.7507,
+        "best_pin_index": 2,
+        "name": "Saint Ann, Jamaica",
+        "similar_to": "Hinkler Park, Australia"
+      },
+      {
+        "lat": 23.473,
+        "lng": 103.2973,
+        "score": 0.7502,
+        "best_pin_index": 8,
+        "name": "Mengzi City, China",
+        "similar_to": "Embu, Kenya"
+      },
+      {
+        "lat": -27.1201,
+        "lng": 152.9741,
+        "score": 0.7489,
+        "best_pin_index": 1,
+        "name": "Brisbane, Australia",
+        "similar_to": "Elliott River, Australia"
+      }
+    ]
+  },
+  "sugarcane": {
+    "name": "Sugarcane",
+    "category": "Agriculture",
+    "featured": true,
+    "pins": [
+      {
+        "lat": -22.4262,
+        "lng": -48.6563,
+        "label": "Sao Paulo, Brazil"
+      },
+      {
+        "lat": -22.739,
+        "lng": -49.9611,
+        "label": "Bauru, Brazil"
+      },
+      {
+        "lat": -10.1136,
+        "lng": -36.108,
+        "label": "Alagoas, Brazil"
+      },
+      {
+        "lat": -17.7277,
+        "lng": -49.4139,
+        "label": "Goias, Brazil"
+      },
+      {
+        "lat": 27.2811,
+        "lng": 77.1027,
+        "label": "Uttar Pradesh, India"
+      },
+      {
+        "lat": 28.7732,
+        "lng": 79.4562,
+        "label": "Uttar Pradesh North, India"
+      },
+      {
+        "lat": 27.3356,
+        "lng": 78.3106,
+        "label": "Agra Region, India"
+      },
+      {
+        "lat": 16.9848,
+        "lng": 74.4748,
+        "label": "Maharashtra, India"
+      },
+      {
+        "lat": 16.9848,
+        "lng": 101.9385,
+        "label": "Khon Kaen, Thailand"
+      },
+      {
+        "lat": 15.0311,
+        "lng": 102.7316,
+        "label": "Nakhon Ratchasima, Thailand"
+      },
+      {
+        "lat": 15.4956,
+        "lng": 102.5271,
+        "label": "Isan, Thailand"
+      },
+      {
+        "lat": 29.9149,
+        "lng": -91.731,
+        "label": "Louisiana, USA"
+      },
+      {
+        "lat": 26.9217,
+        "lng": -80.5857,
+        "label": "Florida, USA"
+      },
+      {
+        "lat": 3.8133,
+        "lng": -76.3138,
+        "label": "Valle del Cauca, Colombia"
+      },
+      {
+        "lat": 14.1648,
+        "lng": -90.9295,
+        "label": "Escuintla, Guatemala"
+      },
+      {
+        "lat": 13.9945,
+        "lng": -90.7059,
+        "label": "Pacific Coast, Guatemala"
+      },
+      {
+        "lat": -28.9265,
+        "lng": 31.4745,
+        "label": "KwaZulu-Natal, South Africa"
+      },
+      {
+        "lat": -26.4266,
+        "lng": -64.5382,
+        "label": "Tucuman, Argentina"
+      },
+      {
+        "lat": 30.5689,
+        "lng": 72.0511,
+        "label": "Punjab, Pakistan"
+      },
+      {
+        "lat": 30.5913,
+        "lng": 72.6514,
+        "label": "Punjab East, Pakistan"
+      },
+      {
+        "lat": -7.6087,
+        "lng": 112.2271,
+        "label": "East Java, Indonesia"
+      }
+    ],
+    "description": "Major sugarcane regions across Brazil, India, Thailand, Colombia, South Africa.",
+    "top_matches": [
+      {
+        "lat": 31.5039,
+        "lng": 72.3054,
+        "score": 0.8384,
+        "best_pin_index": 15,
+        "name": "Pakistan",
+        "similar_to": "Pacific Coast, Guatemala"
+      },
+      {
+        "lat": 26.3476,
+        "lng": 77.857,
+        "score": 0.834,
+        "best_pin_index": 2,
+        "name": "Joura Tahsil, India",
+        "similar_to": "Alagoas, Brazil"
+      },
+      {
+        "lat": -15.8912,
+        "lng": -49.4163,
+        "score": 0.8326,
+        "best_pin_index": 1,
+        "name": "Jaragu\u00e1, Brazil",
+        "similar_to": "Bauru, Brazil"
+      },
+      {
+        "lat": 29.7253,
+        "lng": 70.94,
+        "score": 0.8306,
+        "best_pin_index": 15,
+        "name": "Pakistan",
+        "similar_to": "Pacific Coast, Guatemala"
+      },
+      {
+        "lat": -14.8492,
+        "lng": -49.3984,
+        "score": 0.8297,
+        "best_pin_index": 1,
+        "name": "S\u00e3o Luiz do Norte, Brazil",
+        "similar_to": "Bauru, Brazil"
+      },
+      {
+        "lat": -7.6806,
+        "lng": 114.0411,
+        "score": 0.8196,
+        "best_pin_index": 17,
+        "name": "Situbondo, Indonesia",
+        "similar_to": "Tucuman, Argentina"
+      },
+      {
+        "lat": 25.9703,
+        "lng": 75.8268,
+        "score": 0.8195,
+        "best_pin_index": 2,
+        "name": "Uniara Tehsil, India",
+        "similar_to": "Alagoas, Brazil"
+      },
+      {
+        "lat": -8.1657,
+        "lng": 113.2147,
+        "score": 0.8167,
+        "best_pin_index": 17,
+        "name": "Lumajang, Indonesia",
+        "similar_to": "Tucuman, Argentina"
+      },
+      {
+        "lat": 31.6117,
+        "lng": 73.599,
+        "score": 0.8148,
+        "best_pin_index": 16,
+        "name": "Pakistan",
+        "similar_to": "KwaZulu-Natal, South Africa"
+      },
+      {
+        "lat": 30.9829,
+        "lng": 71.0478,
+        "score": 0.8141,
+        "best_pin_index": 16,
+        "name": "Layyah, Pakistan",
+        "similar_to": "KwaZulu-Natal, South Africa"
+      }
+    ]
+  },
+  "solar-farms": {
+    "name": "Solar Farms",
+    "category": "Energy",
+    "featured": true,
+    "pins": [
+      {
+        "lat": 27.539,
+        "lng": 71.916,
+        "label": "Bhadla Solar Park, India"
+      },
+      {
+        "lat": 24.452,
+        "lng": 32.739,
+        "label": "Benban Solar Park, Egypt"
+      },
+      {
+        "lat": 24.243,
+        "lng": 55.373,
+        "label": "Noor Abu Dhabi, UAE"
+      },
+      {
+        "lat": 24.813,
+        "lng": 55.366,
+        "label": "MBR Solar Park, UAE"
+      },
+      {
+        "lat": 37.4297,
+        "lng": 105.0824,
+        "label": "Tengger Desert Solar, China"
+      },
+      {
+        "lat": -9.6616,
+        "lng": -40.6779,
+        "label": "Sao Goncalo Solar, Brazil"
+      },
+      {
+        "lat": -29.2,
+        "lng": -71.1,
+        "label": "El Romero Solar, Chile"
+      },
+      {
+        "lat": 34.7306,
+        "lng": 126.4233,
+        "label": "Solaseado Solar, South Korea"
+      },
+      {
+        "lat": 31.05,
+        "lng": -6.86,
+        "label": "Noor Ouarzazate, Morocco"
+      },
+      {
+        "lat": 36.1687,
+        "lng": 100.6063,
+        "label": "Gonghe Talatan, China"
+      },
+      {
+        "lat": 33.826,
+        "lng": -115.386,
+        "label": "Desert Sunlight, USA"
+      },
+      {
+        "lat": 32.951,
+        "lng": -113.489,
+        "label": "Agua Caliente, USA"
+      },
+      {
+        "lat": -0.47,
+        "lng": 39.65,
+        "label": "Garissa Solar, Kenya"
+      },
+      {
+        "lat": 38.4466,
+        "lng": -6.219,
+        "label": "Nunez de Balboa, Spain"
+      },
+      {
+        "lat": 11.469,
+        "lng": 106.2011,
+        "label": "Dau Tieng Solar, Vietnam"
+      },
+      {
+        "lat": 35.377,
+        "lng": -120.281,
+        "label": "Topaz Solar Farm, USA"
+      }
+    ],
+    "description": "Utility-scale solar installations across 10 countries.",
+    "top_matches": [
+      {
+        "lat": 36.4267,
+        "lng": -120.8504,
+        "score": 0.9096,
+        "best_pin_index": 13,
+        "name": "San Benito County, United States",
+        "similar_to": "Nunez de Balboa, Spain"
+      },
+      {
+        "lat": 23.3472,
+        "lng": 51.8418,
+        "score": 0.9074,
+        "best_pin_index": 3,
+        "name": "Saudi Arabia",
+        "similar_to": "MBR Solar Park, UAE"
+      },
+      {
+        "lat": 24.3354,
+        "lng": 51.213,
+        "score": 0.9045,
+        "best_pin_index": 3,
+        "name": "Saudi Arabia",
+        "similar_to": "MBR Solar Park, UAE"
+      },
+      {
+        "lat": 22.7543,
+        "lng": 54.7164,
+        "score": 0.9006,
+        "best_pin_index": 2,
+        "name": "Um Al Zumoul, United Arab Emirates",
+        "similar_to": "Noor Abu Dhabi, UAE"
+      },
+      {
+        "lat": 20.4007,
+        "lng": 8.9921,
+        "score": 0.888,
+        "best_pin_index": 1,
+        "name": "Arlit, Niger",
+        "similar_to": "Benban Solar Park, Egypt"
+      },
+      {
+        "lat": 23.1855,
+        "lng": 7.447,
+        "score": 0.8855,
+        "best_pin_index": 1,
+        "name": "Tazrouk, Algeria",
+        "similar_to": "Benban Solar Park, Egypt"
+      },
+      {
+        "lat": 31.8093,
+        "lng": -113.8255,
+        "score": 0.8841,
+        "best_pin_index": 2,
+        "name": "Rocky Point, Mexico",
+        "similar_to": "Noor Abu Dhabi, UAE"
+      },
+      {
+        "lat": 35.9775,
+        "lng": -121.2456,
+        "score": 0.8677,
+        "best_pin_index": 13,
+        "name": "Monterey County, United States",
+        "similar_to": "Nunez de Balboa, Spain"
+      },
+      {
+        "lat": 40.1098,
+        "lng": -4.2311,
+        "score": 0.8674,
+        "best_pin_index": 12,
+        "name": "Santa Cruz del Retamar, Spain",
+        "similar_to": "Garissa Solar, Kenya"
+      },
+      {
+        "lat": 41.6908,
+        "lng": -0.2425,
+        "score": 0.8453,
+        "best_pin_index": 12,
+        "name": "Sari\u00f1ena, Spain",
+        "similar_to": "Garissa Solar, Kenya"
+      }
+    ]
+  },
+  "mangroves": {
+    "name": "Mangroves",
+    "category": "Natural Ecosystems",
+    "featured": true,
+    "pins": [
+      {
+        "lat": 21.949,
+        "lng": 89.183,
+        "label": "Sundarbans, Bangladesh/India"
+      },
+      {
+        "lat": 25.574,
+        "lng": -81.012,
+        "label": "Everglades, USA"
+      },
+      {
+        "lat": 19.3131,
+        "lng": -87.4567,
+        "label": "Sian Kaan, Mexico"
+      },
+      {
+        "lat": -2.5758,
+        "lng": -79.9102,
+        "label": "Gulf of Guayaquil, Ecuador"
+      },
+      {
+        "lat": 10.8828,
+        "lng": -74.3191,
+        "label": "Cienaga Grande, Colombia"
+      },
+      {
+        "lat": 9.0032,
+        "lng": -60.9999,
+        "label": "Orinoco Delta, Venezuela"
+      },
+      {
+        "lat": 4.722,
+        "lng": 6.793,
+        "label": "Niger Delta, Nigeria"
+      },
+      {
+        "lat": -7.805,
+        "lng": 39.422,
+        "label": "Rufiji Delta, Tanzania"
+      },
+      {
+        "lat": 11.429,
+        "lng": 79.783,
+        "label": "Pichavaram, India"
+      },
+      {
+        "lat": 4.8331,
+        "lng": 100.5538,
+        "label": "Matang, Malaysia"
+      }
+    ],
+    "description": "Mangrove ecosystems from the Sundarbans to the Everglades.",
+    "top_matches": [
+      {
+        "lat": 18.64,
+        "lng": -92.0504,
+        "score": 0.7645,
+        "best_pin_index": 1,
+        "name": "Carmen, Mexico",
+        "similar_to": "Everglades, USA"
+      },
+      {
+        "lat": 22.6286,
+        "lng": -81.6479,
+        "score": 0.7625,
+        "best_pin_index": 0,
+        "name": "Nueva Paz, Cuba",
+        "similar_to": "Sundarbans, Bangladesh/India"
+      },
+      {
+        "lat": 22.395,
+        "lng": -81.9533,
+        "score": 0.7547,
+        "best_pin_index": 0,
+        "name": "Ci\u00e9naga de Zapata, Cuba",
+        "similar_to": "Sundarbans, Bangladesh/India"
+      },
+      {
+        "lat": 10.2857,
+        "lng": 104.8783,
+        "score": 0.7216,
+        "best_pin_index": 1,
+        "name": "X\u00e3 B\u00ecnh S\u01a1n, Vietnam",
+        "similar_to": "Everglades, USA"
+      }
+    ]
+  },
+  "tropical-beaches": {
+    "name": "Tropical Coastline",
+    "category": "Natural Ecosystems",
+    "featured": true,
+    "pins": [
+      {
+        "lat": 12.5674,
+        "lng": -70.0237,
+        "label": "Eagle Beach, Aruba"
+      },
+      {
+        "lat": 23.1137,
+        "lng": -81.2886,
+        "label": "Varadero Beach, Cuba"
+      },
+      {
+        "lat": -20.2929,
+        "lng": 149.0215,
+        "label": "Whitehaven Beach, Australia"
+      },
+      {
+        "lat": 12.0464,
+        "lng": 121.9463,
+        "label": "Boracay, Philippines"
+      },
+      {
+        "lat": 20.6343,
+        "lng": -87.0917,
+        "label": "Playa del Carmen, Mexico"
+      },
+      {
+        "lat": -22.952,
+        "lng": -43.2359,
+        "label": "Ipanema, Brazil"
+      },
+      {
+        "lat": -4.3209,
+        "lng": 39.5528,
+        "label": "Diani Beach, Kenya"
+      },
+      {
+        "lat": -6.16,
+        "lng": 39.19,
+        "label": "Zanzibar Beach, Tanzania"
+      },
+      {
+        "lat": 8.58,
+        "lng": 76.88,
+        "label": "Kovalam Beach, India"
+      },
+      {
+        "lat": 10.05,
+        "lng": 124.01,
+        "label": "Moalboal, Cebu, Philippines"
+      }
+    ],
+    "description": "Tropical coastlines from Aruba to Zanzibar.",
+    "top_matches": [
+      {
+        "lat": 11.184,
+        "lng": 125.6474,
+        "score": 0.8401,
+        "best_pin_index": 3,
+        "name": "Philippines",
+        "similar_to": "Boracay, Philippines"
+      },
+      {
+        "lat": 12.0823,
+        "lng": 123.9406,
+        "score": 0.8344,
+        "best_pin_index": 3,
+        "name": "Philippines",
+        "similar_to": "Boracay, Philippines"
+      },
+      {
+        "lat": -16.7895,
+        "lng": 49.6858,
+        "score": 0.7582,
+        "best_pin_index": 2,
+        "name": "Soanierana Ivongo, Madagascar",
+        "similar_to": "Whitehaven Beach, Australia"
+      },
+      {
+        "lat": 21.1733,
+        "lng": -76.6353,
+        "score": 0.7544,
+        "best_pin_index": 1,
+        "name": "Puerto Padre, Cuba",
+        "similar_to": "Varadero Beach, Cuba"
+      },
+      {
+        "lat": 22.916,
+        "lng": -83.193,
+        "score": 0.7438,
+        "best_pin_index": 1,
+        "name": "Bah\u00eda Honda, Cuba",
+        "similar_to": "Varadero Beach, Cuba"
+      },
+      {
+        "lat": 26.2937,
+        "lng": -80.1207,
+        "score": 0.7259,
+        "best_pin_index": 4,
+        "name": "Deerfield Beach, United States",
+        "similar_to": "Playa del Carmen, Mexico"
+      },
+      {
+        "lat": -17.8495,
+        "lng": 49.4523,
+        "score": 0.7175,
+        "best_pin_index": 2,
+        "name": "Toamasina II, Madagascar",
+        "similar_to": "Whitehaven Beach, Australia"
+      },
+      {
+        "lat": -23.1676,
+        "lng": -44.3319,
+        "score": 0.7128,
+        "best_pin_index": 5,
+        "name": "Angra dos Reis, Brazil",
+        "similar_to": "Ipanema, Brazil"
+      },
+      {
+        "lat": -18.7658,
+        "lng": 145.8415,
+        "score": 0.7036,
+        "best_pin_index": 5,
+        "name": "Hinchinbrook Shire, Australia",
+        "similar_to": "Ipanema, Brazil"
+      },
+      {
+        "lat": 7.1775,
+        "lng": 80.0668,
+        "score": 0.693,
+        "best_pin_index": 7,
+        "name": "Gampaha, Sri Lanka",
+        "similar_to": "Zanzibar Beach, Tanzania"
+      }
+    ]
+  },
+  "glaciers": {
+    "name": "Glaciers",
+    "category": "Natural Ecosystems",
+    "featured": true,
+    "pins": [
+      {
+        "lat": -50.497,
+        "lng": -73.137,
+        "label": "Perito Moreno, Argentina"
+      },
+      {
+        "lat": 35.74,
+        "lng": 76.5,
+        "label": "Baltoro Glacier, Pakistan"
+      },
+      {
+        "lat": 27.96,
+        "lng": 86.83,
+        "label": "Khumbu Glacier, Nepal"
+      },
+      {
+        "lat": 64.38,
+        "lng": -16.8,
+        "label": "Vatnajokull, Iceland"
+      },
+      {
+        "lat": 60.02,
+        "lng": -139.5,
+        "label": "Hubbard Glacier, Alaska"
+      },
+      {
+        "lat": -43.53,
+        "lng": 170.1,
+        "label": "Fox Glacier, New Zealand"
+      },
+      {
+        "lat": 46.45,
+        "lng": 8.05,
+        "label": "Aletsch Glacier, Switzerland"
+      },
+      {
+        "lat": 45.9,
+        "lng": 6.93,
+        "label": "Mer de Glace, France"
+      },
+      {
+        "lat": 30.93,
+        "lng": 79.08,
+        "label": "Gangotri Glacier, India"
+      },
+      {
+        "lat": -3.076,
+        "lng": 37.353,
+        "label": "Kilimanjaro Glaciers, Tanzania"
+      }
+    ],
+    "description": "Active glaciers from Patagonia to the Himalayas.",
+    "top_matches": [
+      {
+        "lat": 66.664,
+        "lng": -35.205,
+        "score": 0.9658,
+        "best_pin_index": 1,
+        "name": "Sermersooq, Greenland",
+        "similar_to": "Baltoro Glacier, Pakistan"
+      },
+      {
+        "lat": -46.8471,
+        "lng": -73.7607,
+        "score": 0.9655,
+        "best_pin_index": 0,
+        "name": "Ays\u00e9n, Chile",
+        "similar_to": "Perito Moreno, Argentina"
+      },
+      {
+        "lat": 66.8257,
+        "lng": -38.2592,
+        "score": 0.9641,
+        "best_pin_index": 1,
+        "name": "Sermersooq, Greenland",
+        "similar_to": "Baltoro Glacier, Pakistan"
+      },
+      {
+        "lat": -47.2604,
+        "lng": -73.7247,
+        "score": 0.9481,
+        "best_pin_index": 0,
+        "name": "Tortel, Chile",
+        "similar_to": "Perito Moreno, Argentina"
+      },
+      {
+        "lat": -1.4822,
+        "lng": -78.7912,
+        "score": 0.892,
+        "best_pin_index": 5,
+        "name": "San Andr\u00e9s, Ecuador",
+        "similar_to": "Fox Glacier, New Zealand"
+      },
+      {
+        "lat": 30.372,
+        "lng": 81.1987,
+        "score": 0.8693,
+        "best_pin_index": 4,
+        "name": "Purang, China",
+        "similar_to": "Hubbard Glacier, Alaska"
+      },
+      {
+        "lat": -14.8312,
+        "lng": -69.1613,
+        "score": 0.8692,
+        "best_pin_index": 5,
+        "name": "Municipio Pelechuco, Bolivia",
+        "similar_to": "Fox Glacier, New Zealand"
+      },
+      {
+        "lat": 38.4569,
+        "lng": 73.3295,
+        "score": 0.8581,
+        "best_pin_index": 4,
+        "name": "Murghob District, Tajikistan",
+        "similar_to": "Hubbard Glacier, Alaska"
+      },
+      {
+        "lat": 44.9786,
+        "lng": 6.7463,
+        "score": 0.843,
+        "best_pin_index": 3,
+        "name": "Montgen\u00e8vre, France",
+        "similar_to": "Vatnajokull, Iceland"
+      },
+      {
+        "lat": 46.7214,
+        "lng": 10.1779,
+        "score": 0.8352,
+        "best_pin_index": 2,
+        "name": "Scuol, Switzerland",
+        "similar_to": "Khumbu Glacier, Nepal"
+      }
+    ]
+  },
+  "tropical-dry-forest": {
+    "name": "Tropical Dry Forest",
+    "category": "Natural Ecosystems",
+    "featured": true,
+    "pins": [
+      {
+        "lat": 10.84,
+        "lng": -85.62,
+        "label": "Santa Rosa NP, Costa Rica"
+      },
+      {
+        "lat": -17.5,
+        "lng": -61.5,
+        "label": "Chiquitano, Bolivia"
+      },
+      {
+        "lat": -9.5,
+        "lng": -39.5,
+        "label": "Caatinga, Brazil"
+      },
+      {
+        "lat": -5.8,
+        "lng": -78.1,
+        "label": "Maranon Valley, Peru"
+      },
+      {
+        "lat": -20.25,
+        "lng": 44.42,
+        "label": "Baobab Forest, Madagascar"
+      },
+      {
+        "lat": 21.13,
+        "lng": 70.79,
+        "label": "Gir Forest, India"
+      },
+      {
+        "lat": 11.6,
+        "lng": 76.55,
+        "label": "Mudumalai, India"
+      },
+      {
+        "lat": 14.45,
+        "lng": 101.38,
+        "label": "Khao Yai, Thailand"
+      },
+      {
+        "lat": 19.5,
+        "lng": -105.05,
+        "label": "Chamela-Cuixmala, Mexico"
+      }
+    ],
+    "description": "Tropical dry forest biomes in Costa Rica, Bolivia, India, Madagascar.",
+    "top_matches": [
+      {
+        "lat": -3.1351,
+        "lng": -78.6475,
+        "score": 0.8808,
+        "best_pin_index": 3,
+        "name": "Chiguinda, Ecuador",
+        "similar_to": "Maranon Valley, Peru"
+      },
+      {
+        "lat": -4.8599,
+        "lng": -79.3662,
+        "score": 0.8796,
+        "best_pin_index": 3,
+        "name": "El Carmen de la Frontera, Peru",
+        "similar_to": "Maranon Valley, Peru"
+      },
+      {
+        "lat": 16.2685,
+        "lng": 101.7522,
+        "score": 0.8728,
+        "best_pin_index": 7,
+        "name": "Nong Bua Daeng District, Thailand",
+        "similar_to": "Khao Yai, Thailand"
+      },
+      {
+        "lat": 16.6637,
+        "lng": 101.5006,
+        "score": 0.8434,
+        "best_pin_index": 7,
+        "name": "Lom Sak District, Thailand",
+        "similar_to": "Khao Yai, Thailand"
+      },
+      {
+        "lat": -16.4122,
+        "lng": -58.1659,
+        "score": 0.7921,
+        "best_pin_index": 1,
+        "name": "C\u00e1ceres, Brazil",
+        "similar_to": "Chiquitano, Bolivia"
+      },
+      {
+        "lat": -9.5491,
+        "lng": -40.7386,
+        "score": 0.7913,
+        "best_pin_index": 2,
+        "name": "Juazeiro, Brazil",
+        "similar_to": "Caatinga, Brazil"
+      },
+      {
+        "lat": -15.4061,
+        "lng": -61.0765,
+        "score": 0.7854,
+        "best_pin_index": 1,
+        "name": "San Ignacio de Velasco, Bolivia",
+        "similar_to": "Chiquitano, Bolivia"
+      },
+      {
+        "lat": -5.7582,
+        "lng": -40.1996,
+        "score": 0.7785,
+        "best_pin_index": 2,
+        "name": "Tau\u00e1, Brazil",
+        "similar_to": "Caatinga, Brazil"
+      },
+      {
+        "lat": 19.718,
+        "lng": -89.1039,
+        "score": 0.7738,
+        "best_pin_index": 0,
+        "name": "Tekax, Mexico",
+        "similar_to": "Santa Rosa NP, Costa Rica"
+      },
+      {
+        "lat": 21.0116,
+        "lng": -88.5649,
+        "score": 0.7719,
+        "best_pin_index": 0,
+        "name": "Cenotillo, Mexico",
+        "similar_to": "Santa Rosa NP, Costa Rica"
+      }
+    ]
+  },
+  "wildfire-zones": {
+    "name": "Wildfire Zones",
+    "category": "Climate Risk",
+    "featured": true,
+    "pins": [
+      {
+        "lat": 39.76,
+        "lng": -121.62,
+        "label": "Paradise, California"
+      },
+      {
+        "lat": 34.03,
+        "lng": -118.68,
+        "label": "Malibu, California"
+      },
+      {
+        "lat": 37.5,
+        "lng": 22.0,
+        "label": "Peloponnese, Greece"
+      },
+      {
+        "lat": 37.2,
+        "lng": -8.0,
+        "label": "Algarve, Portugal"
+      },
+      {
+        "lat": 40.0,
+        "lng": 9.0,
+        "label": "Sardinia, Italy"
+      },
+      {
+        "lat": -33.7,
+        "lng": 150.3,
+        "label": "Blue Mountains, Australia"
+      },
+      {
+        "lat": -37.5,
+        "lng": 148.5,
+        "label": "East Gippsland, Australia"
+      },
+      {
+        "lat": -33.0,
+        "lng": -71.5,
+        "label": "Valpara\u00edso, Chile"
+      },
+      {
+        "lat": 52.0,
+        "lng": -125.0,
+        "label": "Central BC, Canada"
+      },
+      {
+        "lat": 56.0,
+        "lng": -115.0,
+        "label": "Alberta, Canada"
+      },
+      {
+        "lat": 62.0,
+        "lng": 130.0,
+        "label": "Yakutia, Russia"
+      },
+      {
+        "lat": 20.9,
+        "lng": -156.5,
+        "label": "Maui, Hawaii"
+      }
+    ],
+    "description": "High-risk wildfire areas from California to Australia.",
+    "top_matches": [
+      {
+        "lat": 36.8579,
+        "lng": 6.6924,
+        "score": 0.8588,
+        "best_pin_index": 2,
+        "name": "Tamalous, Algeria",
+        "similar_to": "Peloponnese, Greece"
+      },
+      {
+        "lat": 36.8399,
+        "lng": 8.9742,
+        "score": 0.8578,
+        "best_pin_index": 2,
+        "name": "\u0627\u0644\u0641\u0631\u0627\u064a\u062c\u064a\u0629, Tunisia",
+        "similar_to": "Peloponnese, Greece"
+      },
+      {
+        "lat": -37.882,
+        "lng": 146.2008,
+        "score": 0.851,
+        "best_pin_index": 4,
+        "name": "Shire of Baw Baw, Australia",
+        "similar_to": "Sardinia, Italy"
+      },
+      {
+        "lat": 36.6243,
+        "lng": 3.8897,
+        "score": 0.8503,
+        "best_pin_index": 1,
+        "name": "Ait Yahia Moussa, Algeria",
+        "similar_to": "Malibu, California"
+      },
+      {
+        "lat": -41.062,
+        "lng": 147.9974,
+        "score": 0.85,
+        "best_pin_index": 4,
+        "name": "Dorset, Australia",
+        "similar_to": "Sardinia, Italy"
+      },
+      {
+        "lat": 38.6904,
+        "lng": -121.1558,
+        "score": 0.8475,
+        "best_pin_index": 0,
+        "name": "Folsom, United States",
+        "similar_to": "Paradise, California"
+      },
+      {
+        "lat": 38.2233,
+        "lng": -4.3928,
+        "score": 0.8469,
+        "best_pin_index": 1,
+        "name": "Carde\u00f1a, Spain",
+        "similar_to": "Malibu, California"
+      },
+      {
+        "lat": 39.2294,
+        "lng": -7.3033,
+        "score": 0.8448,
+        "best_pin_index": 3,
+        "name": "Portalegre, Portugal",
+        "similar_to": "Algarve, Portugal"
+      },
+      {
+        "lat": 39.1755,
+        "lng": -7.9501,
+        "score": 0.8309,
+        "best_pin_index": 3,
+        "name": "Ponte de Sor, Portugal",
+        "similar_to": "Algarve, Portugal"
+      },
+      {
+        "lat": 36.9657,
+        "lng": -119.3771,
+        "score": 0.8058,
+        "best_pin_index": 0,
+        "name": "Fresno County, United States",
+        "similar_to": "Paradise, California"
+      }
+    ]
+  },
+  "volcanic-terrain": {
+    "name": "Volcanic Terrain",
+    "description": "Active and recently active volcanic regions worldwide.",
+    "category": "Natural Ecosystems",
+    "featured": true,
+    "pins": [
+      {
+        "lat": 19.4,
+        "lng": -155.28,
+        "label": "Kilauea, Hawaii"
+      },
+      {
+        "lat": -8.34,
+        "lng": 115.51,
+        "label": "Mount Agung, Bali"
+      },
+      {
+        "lat": 37.75,
+        "lng": 14.99,
+        "label": "Mount Etna, Sicily"
+      },
+      {
+        "lat": -1.47,
+        "lng": 29.24,
+        "label": "Nyiragongo, Congo"
+      },
+      {
+        "lat": 63.63,
+        "lng": -19.62,
+        "label": "Eyjafjallajokull, Iceland"
+      },
+      {
+        "lat": -41.28,
+        "lng": 175.56,
+        "label": "Ruapehu, New Zealand"
+      },
+      {
+        "lat": 35.36,
+        "lng": 138.73,
+        "label": "Mount Fuji, Japan"
+      },
+      {
+        "lat": -0.68,
+        "lng": -78.44,
+        "label": "Cotopaxi, Ecuador"
+      },
+      {
+        "lat": 46.85,
+        "lng": -121.76,
+        "label": "Mount Rainier, USA"
+      },
+      {
+        "lat": -35.65,
+        "lng": -70.76,
+        "label": "Descabezado Grande, Chile"
+      }
+    ],
+    "top_matches": [
+      {
+        "lat": 64.7775,
+        "lng": -20.3828,
+        "score": 0.9178,
+        "best_pin_index": 4,
+        "name": "Borgarbygg\u00f0, Iceland",
+        "similar_to": "Eyjafjallajokull, Iceland"
+      },
+      {
+        "lat": -15.8193,
+        "lng": -68.5325,
+        "score": 0.9158,
+        "best_pin_index": 6,
+        "name": "Municipio Sorata, Bolivia",
+        "similar_to": "Mount Fuji, Japan"
+      },
+      {
+        "lat": 64.5619,
+        "lng": -15.478,
+        "score": 0.9136,
+        "best_pin_index": 4,
+        "name": "Sveitarf\u00e9lagi\u00f0 Hornafj\u00f6r\u00f0ur, Iceland",
+        "similar_to": "Eyjafjallajokull, Iceland"
+      },
+      {
+        "lat": -14.8312,
+        "lng": -69.1613,
+        "score": 0.8947,
+        "best_pin_index": 6,
+        "name": "Municipio Pelechuco, Bolivia",
+        "similar_to": "Mount Fuji, Japan"
+      },
+      {
+        "lat": -34.0731,
+        "lng": -70.3111,
+        "score": 0.8506,
+        "best_pin_index": 8,
+        "name": "Machal\u00ed, Chile",
+        "similar_to": "Mount Rainier, USA"
+      },
+      {
+        "lat": 38.5108,
+        "lng": 71.4789,
+        "score": 0.8504,
+        "best_pin_index": 7,
+        "name": "Vanj District, Tajikistan",
+        "similar_to": "Cotopaxi, Ecuador"
+      },
+      {
+        "lat": 41.6189,
+        "lng": 76.3119,
+        "score": 0.8468,
+        "best_pin_index": 7,
+        "name": "Naryn District, Kyrgyzstan",
+        "similar_to": "Cotopaxi, Ecuador"
+      },
+      {
+        "lat": -39.6067,
+        "lng": 175.45,
+        "score": 0.8416,
+        "best_pin_index": 5,
+        "name": "Whanganui District, New Zealand",
+        "similar_to": "Ruapehu, New Zealand"
+      },
+      {
+        "lat": -39.5708,
+        "lng": 175.8811,
+        "score": 0.8399,
+        "best_pin_index": 5,
+        "name": "Rangit\u012bkei District, New Zealand",
+        "similar_to": "Ruapehu, New Zealand"
+      },
+      {
+        "lat": -34.666,
+        "lng": -69.9338,
+        "score": 0.8377,
+        "best_pin_index": 8,
+        "name": "Distrito Cuadro Benegas, Argentina",
+        "similar_to": "Mount Rainier, USA"
+      }
+    ]
+  },
+  "desert-regions": {
+    "name": "Desert Regions",
+    "description": "Major arid desert landscapes across five continents.",
+    "category": "Natural Ecosystems",
+    "featured": true,
+    "pins": [
+      {
+        "lat": 23.42,
+        "lng": 25.66,
+        "label": "Sahara, Egypt"
+      },
+      {
+        "lat": -24.75,
+        "lng": 134.77,
+        "label": "Simpson Desert, Australia"
+      },
+      {
+        "lat": 36.57,
+        "lng": -116.86,
+        "label": "Death Valley, USA"
+      },
+      {
+        "lat": 40.47,
+        "lng": 62.05,
+        "label": "Karakum Desert, Turkmenistan"
+      },
+      {
+        "lat": -24.66,
+        "lng": 15.43,
+        "label": "Namib Desert, Namibia"
+      },
+      {
+        "lat": 23.05,
+        "lng": 72.53,
+        "label": "Thar Desert, India"
+      },
+      {
+        "lat": 42.75,
+        "lng": 105.0,
+        "label": "Gobi Desert, Mongolia"
+      },
+      {
+        "lat": -30.05,
+        "lng": -69.33,
+        "label": "Atacama Desert, Chile"
+      },
+      {
+        "lat": 31.5,
+        "lng": 36.3,
+        "label": "Wadi Rum, Jordan"
+      },
+      {
+        "lat": 21.12,
+        "lng": -12.82,
+        "label": "Saharan Mauritania"
+      }
+    ],
+    "top_matches": [
+      {
+        "lat": -23.8143,
+        "lng": 137.7027,
+        "score": 1,
+        "best_pin_index": 1,
+        "name": "Australia",
+        "similar_to": "Simpson Desert, Australia"
+      },
+      {
+        "lat": -25.3774,
+        "lng": 136.4271,
+        "score": 1,
+        "best_pin_index": 1,
+        "name": "Macdonnell Region, Australia",
+        "similar_to": "Simpson Desert, Australia"
+      },
+      {
+        "lat": -25.6649,
+        "lng": 15.6037,
+        "score": 0.9705,
+        "best_pin_index": 4,
+        "name": "Namibia",
+        "similar_to": "Namib Desert, Namibia"
+      },
+      {
+        "lat": 19.5384,
+        "lng": -11.3457,
+        "score": 0.9558,
+        "best_pin_index": 9,
+        "name": "Mauritania",
+        "similar_to": "Saharan Mauritania"
+      },
+      {
+        "lat": 19.718,
+        "lng": -11.6871,
+        "score": 0.9529,
+        "best_pin_index": 9,
+        "name": "Mauritania",
+        "similar_to": "Saharan Mauritania"
+      },
+      {
+        "lat": 42.2298,
+        "lng": 106.118,
+        "score": 0.9455,
+        "best_pin_index": 6,
+        "name": "Bayan-Ovoo, Mongolia",
+        "similar_to": "Gobi Desert, Mongolia"
+      },
+      {
+        "lat": 42.3196,
+        "lng": 97.2067,
+        "score": 0.9449,
+        "best_pin_index": 6,
+        "name": "Mazongshan, China",
+        "similar_to": "Gobi Desert, Mongolia"
+      },
+      {
+        "lat": 39.3552,
+        "lng": 61.6334,
+        "score": 0.934,
+        "best_pin_index": 3,
+        "name": "Turkmenistan",
+        "similar_to": "Karakum Desert, Turkmenistan"
+      },
+      {
+        "lat": -26.2398,
+        "lng": 16.1966,
+        "score": 0.9317,
+        "best_pin_index": 4,
+        "name": "Namibia",
+        "similar_to": "Namib Desert, Namibia"
+      },
+      {
+        "lat": 38.906,
+        "lng": 61.2382,
+        "score": 0.9305,
+        "best_pin_index": 3,
+        "name": "Turkmenistan",
+        "similar_to": "Karakum Desert, Turkmenistan"
+      }
+    ]
+  }
+}
