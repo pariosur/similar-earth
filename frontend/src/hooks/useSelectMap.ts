@@ -8,7 +8,7 @@ import type { MapInfo } from '../api/client'
  */
 export function useSelectMap() {
   const [loading, setLoading] = useState(false)
-  const pollRef = useRef<ReturnType<typeof setInterval>>()
+  const pollRef = useRef<ReturnType<typeof setInterval>>(undefined)
 
   const selectMap = useCallback(async (map: MapInfo) => {
     const store = useQueryStore.getState()

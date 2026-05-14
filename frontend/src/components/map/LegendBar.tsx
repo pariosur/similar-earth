@@ -43,7 +43,7 @@ interface BarProps {
   onPillClick: (target: 'global' | 'hd') => void
 }
 
-function MobileBar({ isGlobalActive, isHdActive, hdState, onPillClick }: BarProps) {
+function MobileBar({ isGlobalActive, hdState, onPillClick }: BarProps) {
   // Full-width CTA when HD is ready to trigger
   if (hdState === 'zoomed') {
     return (

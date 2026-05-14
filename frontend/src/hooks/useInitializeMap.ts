@@ -2,8 +2,6 @@ import { useEffect, useState } from 'react'
 import { getLayers, listMaps, getMap, postQuery, getQueryStatus, type MapInfo } from '../api/client'
 import { useQueryStore } from '../stores/queryStore'
 
-const DEFAULT_MAP_SLUG = 'avocado'
-
 function extractPins(map: MapInfo) {
   return (map.pins || []).map((p) => ({ lat: p.lat, lng: p.lng, label: p.label }))
 }

@@ -13,7 +13,6 @@ export function CreateMap({ onPublished }: CreateMapProps) {
   const createMode = useQueryStore((s) => s.createMode)
   const setCreateMode = useQueryStore((s) => s.setCreateMode)
   const removePin = useQueryStore((s) => s.removePin)
-  const setQueryStatus = useQueryStore((s) => s.setQueryStatus)
   const setQuery = useQueryStore((s) => s.setQuery)
   const tileUrl = useQueryStore((s) => s.tileUrl)
 
@@ -30,8 +29,8 @@ export function CreateMap({ onPublished }: CreateMapProps) {
   const [computing, setComputing] = useState(false)
   const [elapsed, setElapsed] = useState(0)
   const [error, setError] = useState<string | null>(null)
-  const timerRef = useRef<ReturnType<typeof setInterval>>()
-  const pollRef = useRef<ReturnType<typeof setInterval>>()
+  const timerRef = useRef<ReturnType<typeof setInterval>>(undefined)
+  const pollRef = useRef<ReturnType<typeof setInterval>>(undefined)
 
   // Enable create mode when this tab mounts (desktop only — mobile sets it from SidePanel)
   useEffect(() => {
@@ -40,7 +39,7 @@ export function CreateMap({ onPublished }: CreateMapProps) {
   }, [])
 
   // Search for places to add as pins
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>()
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined)
   function handleSearch(q: string) {
     setSearchQuery(q)
     if (debounceRef.current) clearTimeout(debounceRef.current)
