@@ -21,9 +21,13 @@ function computeVectorStyle(theme: ResolvedTheme, basemap: Basemap): string {
 /**
  * Toggle the Esri satellite raster in-place: add it as the bottom layer and hide the
  * opaque base fills so imagery shows through, keeping labels + lines on top. Reversible.
+ *
+ * Must only be called once the style DOCUMENT is loaded (from a 'load' or 'style.load'
+ * handler, or after the initial load). It does NOT depend on map.isStyleLoaded() — that
+ * stays false for seconds while sprite/glyphs/tiles load, yet addLayer/addSource already
+ * work. Gating on isStyleLoaded() was what stopped the satellite from appearing on toggle.
  */
 function applyBasemap(map: maplibregl.Map, basemap: Basemap) {
-  if (!map.isStyleLoaded()) return
   const hasSat = !!map.getLayer(SAT_LAYER_ID)
 
   if (basemap === 'satellite') {
@@ -75,6 +79,9 @@ export function useMapInit({ onFlyToReady }: UseMapInitOptions) {
   const basemap = useThemeStore((s) => s.basemap)
   // Tracks the vector style currently loaded so we only call setStyle when it actually changes.
   const currentStyleRef = useRef<string>(computeVectorStyle(resolvedTheme, basemap))
+  // True once the style document is loaded (initial 'load' or post-setStyle 'style.load'),
+  // i.e. when it's safe to add/remove layers. Reset to false during a setStyle swap.
+  const styleReadyRef = useRef(false)
   const addPin = useQueryStore((s) => s.addPin)
   const addPinMode = useQueryStore((s) => s.addPinMode)
   const createMode = useQueryStore((s) => s.createMode)
@@ -129,6 +136,7 @@ export function useMapInit({ onFlyToReady }: UseMapInitOptions) {
     map.addControl(new maplibregl.NavigationControl(), 'bottom-right')
 
     map.on('load', () => {
+      styleReadyRef.current = true
       applyBasemap(map, useThemeStore.getState().basemap)
       setMapReady(true)
     });
@@ -185,13 +193,18 @@ export function useMapInit({ onFlyToReady }: UseMapInitOptions) {
 
     if (target !== currentStyleRef.current) {
       currentStyleRef.current = target
+      styleReadyRef.current = false
       setMapReady(false)
-      map.setStyle(target)
+      // diff:false forces a full style reload so 'style.load' fires reliably (a diffed
+      // setStyle may not emit it), and gives us a clean slate to re-add overlays onto.
+      map.setStyle(target, { diff: false })
       map.once('style.load', () => {
-        applyBasemap(map, basemap)
+        styleReadyRef.current = true
+        applyBasemap(map, useThemeStore.getState().basemap)
         setMapReady(true)
       })
-    } else {
+    } else if (styleReadyRef.current) {
+      // Same vector style — toggle the satellite raster in place (instant, overlays intact).
       applyBasemap(map, basemap)
     }
   }, [resolvedTheme, basemap])
