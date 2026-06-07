@@ -10,6 +10,7 @@ import { ContextChip } from './ContextChip'
 import { LegendBar } from './LegendBar'
 import { SelectionBanner } from './SelectionBanner'
 import { MapLegend } from './MapLegend'
+import { BasemapToggle } from './BasemapToggle'
 
 interface MapContainerProps {
   onFlyToReady?: (fn: (lat: number, lng: number) => void) => void
@@ -30,6 +31,7 @@ export function MapContainer({ onFlyToReady }: MapContainerProps) {
       <ContextChip />
       <SelectionBanner />
       <MapLegend />
+      <BasemapToggle />
       <LegendBar onPillClick={handlePillClick} />
 
       {/* Shimmer overlay during HD computation */}

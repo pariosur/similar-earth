@@ -1,10 +1,65 @@
 import { useRef, useEffect, useCallback, useState } from 'react'
 import maplibregl from 'maplibre-gl'
 import { useQueryStore } from '../stores/queryStore'
-import { useThemeStore } from '../stores/themeStore'
+import { useThemeStore, type ResolvedTheme, type Basemap } from '../stores/themeStore'
 
 const DARK_STYLE = 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json'
 const LIGHT_STYLE = 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json'
+
+// Esri World Imagery — free, no API key, high-res global coverage to ~z19.
+const ESRI_SATELLITE = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
+const ESRI_ATTRIBUTION = 'Imagery © Esri, Maxar, Earthstar Geographics'
+const SAT_SOURCE_ID = 'satellite-basemap'
+const SAT_LAYER_ID = 'satellite-basemap-layer'
+
+// Satellite mode always uses the dark vector style so labels stay legible (white halos) over imagery.
+function computeVectorStyle(theme: ResolvedTheme, basemap: Basemap): string {
+  if (basemap === 'satellite') return DARK_STYLE
+  return theme === 'dark' ? DARK_STYLE : LIGHT_STYLE
+}
+
+/**
+ * Toggle the Esri satellite raster in-place: add it as the bottom layer and hide the
+ * opaque base fills so imagery shows through, keeping labels + lines on top. Reversible.
+ */
+function applyBasemap(map: maplibregl.Map, basemap: Basemap) {
+  if (!map.isStyleLoaded()) return
+  const hasSat = !!map.getLayer(SAT_LAYER_ID)
+
+  if (basemap === 'satellite') {
+    if (!hasSat) {
+      const layers = map.getStyle().layers || []
+      const firstNonBg = layers.find((l) => l.type !== 'background')
+      if (!map.getSource(SAT_SOURCE_ID)) {
+        map.addSource(SAT_SOURCE_ID, {
+          type: 'raster',
+          tiles: [ESRI_SATELLITE],
+          tileSize: 256,
+          maxzoom: 19,
+          attribution: ESRI_ATTRIBUTION,
+        })
+      }
+      map.addLayer({ id: SAT_LAYER_ID, type: 'raster', source: SAT_SOURCE_ID }, firstNonBg?.id)
+    }
+    // Hide opaque base layers so imagery is visible; keep symbols (labels) + lines.
+    for (const l of map.getStyle().layers || []) {
+      if (l.id === SAT_LAYER_ID) continue
+      if (l.type === 'background' || l.type === 'fill' || l.type === 'fill-extrusion') {
+        try { map.setLayoutProperty(l.id, 'visibility', 'none') } catch {}
+      }
+    }
+  } else {
+    if (hasSat) {
+      try { map.removeLayer(SAT_LAYER_ID) } catch {}
+      try { map.removeSource(SAT_SOURCE_ID) } catch {}
+    }
+    for (const l of map.getStyle().layers || []) {
+      if (l.type === 'background' || l.type === 'fill' || l.type === 'fill-extrusion') {
+        try { map.setLayoutProperty(l.id, 'visibility', 'visible') } catch {}
+      }
+    }
+  }
+}
 
 interface UseMapInitOptions {
   onFlyToReady?: (fn: (lat: number, lng: number) => void) => void
@@ -17,6 +72,9 @@ export function useMapInit({ onFlyToReady }: UseMapInitOptions) {
   const [zoom, setZoom] = useState(2.5)
 
   const resolvedTheme = useThemeStore((s) => s.resolved)
+  const basemap = useThemeStore((s) => s.basemap)
+  // Tracks the vector style currently loaded so we only call setStyle when it actually changes.
+  const currentStyleRef = useRef<string>(computeVectorStyle(resolvedTheme, basemap))
   const addPin = useQueryStore((s) => s.addPin)
   const addPinMode = useQueryStore((s) => s.addPinMode)
   const createMode = useQueryStore((s) => s.createMode)
@@ -60,16 +118,20 @@ export function useMapInit({ onFlyToReady }: UseMapInitOptions) {
   useEffect(() => {
     if (!mapContainerRef.current || mapRef.current) return
 
+    const initialBasemap = useThemeStore.getState().basemap
     const map = new maplibregl.Map({
       container: mapContainerRef.current,
-      style: resolvedTheme === 'dark' ? DARK_STYLE : LIGHT_STYLE,
+      style: computeVectorStyle(resolvedTheme, initialBasemap),
       center: [-75, 10],
       zoom: 2.5,
     })
 
     map.addControl(new maplibregl.NavigationControl(), 'bottom-right')
 
-    map.on('load', () => setMapReady(true));
+    map.on('load', () => {
+      applyBasemap(map, useThemeStore.getState().basemap)
+      setMapReady(true)
+    });
     (window as any).__map = map
     map.on('zoom', () => setZoom(map.getZoom()))
 
@@ -109,14 +171,30 @@ export function useMapInit({ onFlyToReady }: UseMapInitOptions) {
     container.style.cursor = (createMode || addPinMode) ? 'crosshair' : ''
   }, [createMode, addPinMode])
 
-  // Switch basemap on theme change
+  // React to theme / basemap changes.
+  // - If the underlying vector style changes (e.g. light<->dark, or light->satellite),
+  //   setStyle wipes all custom layers, so we flip mapReady to remount the overlay
+  //   components (HeatmapLayer/markers) — they re-add themselves from store state.
+  //   This also fixes the heatmap silently vanishing on a theme toggle.
+  // - If the vector style is unchanged (e.g. dark<->satellite), toggle the satellite
+  //   raster in place — instant, overlays untouched.
   useEffect(() => {
     const map = mapRef.current
     if (!map) return
-    const newStyle = resolvedTheme === 'dark' ? DARK_STYLE : LIGHT_STYLE
-    map.setStyle(newStyle)
-    map.once('style.load', () => setMapReady(true))
-  }, [resolvedTheme])
+    const target = computeVectorStyle(resolvedTheme, basemap)
+
+    if (target !== currentStyleRef.current) {
+      currentStyleRef.current = target
+      setMapReady(false)
+      map.setStyle(target)
+      map.once('style.load', () => {
+        applyBasemap(map, basemap)
+        setMapReady(true)
+      })
+    } else {
+      applyBasemap(map, basemap)
+    }
+  }, [resolvedTheme, basemap])
 
   return { mapContainerRef, mapRef, mapReady, zoom, handleFlyTo }
 }

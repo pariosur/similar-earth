@@ -2,11 +2,14 @@ import { create } from 'zustand'
 
 export type ThemePreference = 'light' | 'dark' | 'system'
 export type ResolvedTheme = 'light' | 'dark'
+export type Basemap = 'map' | 'satellite'
 
 interface ThemeState {
   preference: ThemePreference
   resolved: ResolvedTheme
+  basemap: Basemap
   setTheme: (pref: ThemePreference) => void
+  setBasemap: (basemap: Basemap) => void
 }
 
 function getSystemTheme(): ResolvedTheme {
@@ -31,6 +34,7 @@ function apply(resolved: ResolvedTheme) {
 }
 
 const stored = (localStorage.getItem('theme') as ThemePreference) || 'dark'
+const storedBasemap = (localStorage.getItem('basemap') as Basemap) || 'map'
 
 export const useThemeStore = create<ThemeState>((set) => {
   const initial = resolve(stored)
@@ -50,11 +54,16 @@ export const useThemeStore = create<ThemeState>((set) => {
   return {
     preference: stored,
     resolved: initial,
+    basemap: storedBasemap,
     setTheme: (pref) => {
       localStorage.setItem('theme', pref)
       const resolved = resolve(pref)
       apply(resolved)
       set({ preference: pref, resolved })
+    },
+    setBasemap: (basemap) => {
+      localStorage.setItem('basemap', basemap)
+      set({ basemap })
     },
   }
 })
