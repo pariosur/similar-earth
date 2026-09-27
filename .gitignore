@@ -34,6 +34,8 @@ docker-compose.override.yml
 
 # Large data files (generated, not committed)
 data/grid.bin
+data/search_metadata.bin
+data/search_metadata.json
 data/scores_*.bin
 tiles/
 scripts/data/*.tif

@@ -21,6 +21,7 @@ import (
 	"github.com/pariosur/tierraai/internal/db"
 	"github.com/pariosur/tierraai/internal/gee"
 	"github.com/pariosur/tierraai/internal/grid"
+	"github.com/pariosur/tierraai/internal/searchdata"
 	"github.com/pariosur/tierraai/internal/similarity"
 	"github.com/pariosur/tierraai/internal/tiles"
 )
@@ -34,20 +35,22 @@ func validSlug(s string) bool {
 
 // Server is the main HTTP server for the Similar Earth API.
 type Server struct {
-	app       *fiber.App
-	grid      *grid.Grid
-	engine    *similarity.Engine
-	renderer  *tiles.Renderer
-	tileCache *tiles.TileCache
-	db        *db.DB
+	app              *fiber.App
+	grid             *grid.Grid
+	engine           *similarity.Engine
+	renderer         *tiles.Renderer
+	tileCache        *tiles.TileCache
+	db               *db.DB
 	geeClient        *gee.Client
 	cogClient        *cog.Client
 	cogZoomThreshold int
 	startTime        time.Time
 
 	// In-memory store for active query results.
-	queries   map[uuid.UUID]*similarity.QueryResult
-	queriesMu sync.RWMutex
+	queries     map[uuid.UUID]*similarity.QueryResult
+	queryExpiry map[uuid.UUID]time.Time
+	queriesMu   sync.RWMutex
+	computeSlot chan struct{}
 
 	// Track computing status for async queries.
 	computing   map[uuid.UUID]bool
@@ -55,7 +58,9 @@ type Server struct {
 
 	// Pre-computed layer results.
 	precomputed *similarity.PrecomputedStore
-	layerMeta    map[string]LayerMeta
+	layerMeta   map[string]LayerMeta
+	searchData  *searchdata.Data
+	searchSlots chan struct{}
 }
 
 // NewServer creates the API server with all dependencies wired up.
@@ -65,9 +70,13 @@ func NewServer(g *grid.Grid, database *db.DB, geeClient *gee.Client, cogClient *
 	tileCache := tiles.NewTileCache(10000) // cache up to 10k tiles
 	precomputed := similarity.NewPrecomputedStore()
 
+	trustedProxies := strings.FieldsFunc(os.Getenv("TRUSTED_PROXIES"), func(r rune) bool { return r == ',' || r == ' ' })
 	app := fiber.New(fiber.Config{
-		DisableStartupMessage: true,
-		BodyLimit:             1 * 1024 * 1024, // 1 MB
+		DisableStartupMessage:   true,
+		BodyLimit:               1 * 1024 * 1024, // 1 MB
+		ProxyHeader:             "X-Forwarded-For",
+		EnableTrustedProxyCheck: true,
+		TrustedProxies:          trustedProxies,
 	})
 
 	s := &Server{
@@ -82,9 +91,26 @@ func NewServer(g *grid.Grid, database *db.DB, geeClient *gee.Client, cogClient *
 		cogZoomThreshold: cogZoomThreshold,
 		startTime:        time.Now(),
 		queries:          make(map[uuid.UUID]*similarity.QueryResult),
+		queryExpiry:      make(map[uuid.UUID]time.Time),
+		computeSlot:      make(chan struct{}, 1),
 		computing:        make(map[uuid.UUID]bool),
 		precomputed:      precomputed,
-		layerMeta:         make(map[string]LayerMeta),
+		layerMeta:        make(map[string]LayerMeta),
+		searchSlots:      make(chan struct{}, 1),
+	}
+	metadataPath := os.Getenv("SEARCH_METADATA_PATH")
+	if metadataPath == "" {
+		metadataPath = "./data/search_metadata.bin"
+	}
+	if _, err := os.Stat(metadataPath); err == nil {
+		if data, err := searchdata.Load(metadataPath, g); err != nil {
+			log.Printf("WARNING: Natural search datasets unavailable: %v", err)
+		} else {
+			s.searchData = data
+			log.Printf("Loaded natural search metadata from %s", metadataPath)
+		}
+	} else {
+		log.Printf("Natural search disabled: metadata file %s is missing", metadataPath)
 	}
 
 	// Middleware
@@ -123,6 +149,14 @@ func NewServer(g *grid.Grid, database *db.DB, geeClient *gee.Client, cogClient *
 		},
 		LimitReached: func(c *fiber.Ctx) error {
 			return c.Status(fiber.StatusTooManyRequests).JSON(fiber.Map{"error": "rate limit exceeded, try again later"})
+		},
+	})
+
+	searchLimiter := limiter.New(limiter.Config{
+		Max: 6, Expiration: time.Minute,
+		KeyGenerator: func(c *fiber.Ctx) string { return c.IP() },
+		LimitReached: func(c *fiber.Ctx) error {
+			return c.Status(fiber.StatusTooManyRequests).JSON(fiber.Map{"error": "search limit reached, try again later"})
 		},
 	})
 
@@ -168,6 +202,7 @@ func NewServer(g *grid.Grid, database *db.DB, geeClient *gee.Client, cogClient *
 	api.Get("/maps/:id", s.handleGetMap)
 	api.Post("/maps/:id/star", createLimiter, s.handleStarMap)
 	api.Post("/query", queryLimiter, s.handleQuery)
+	api.Post("/search", searchLimiter, s.handleNaturalSearch)
 	api.Get("/query/:id/status", s.handleQueryStatus)
 	api.Get("/tiles/:id/:z/:x/:y", s.handleTile)
 	api.Get("/query/:id/point", s.handlePoint)

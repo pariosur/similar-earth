@@ -66,7 +66,10 @@ func (e *Engine) Compute(query *Query) (*QueryResult, error) {
 	}
 
 	scores := make([]float32, total)
-	bestPin := make([]uint8, total)
+	var bestPin []uint8
+	if len(refs) > 1 {
+		bestPin = make([]uint8, total)
+	}
 
 	// --- build land pixel index for faster iteration ---
 	landPixels := g.LandPixelIndices()
@@ -113,7 +116,9 @@ func (e *Engine) Compute(query *Query) (*QueryResult, error) {
 					score = 1
 				}
 				scores[px] = score
-				bestPin[px] = uint8(maxIdx)
+				if bestPin != nil {
+					bestPin[px] = uint8(maxIdx)
+				}
 			}
 		}(start, end)
 	}

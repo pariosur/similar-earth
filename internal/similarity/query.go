@@ -23,7 +23,7 @@ type Query struct {
 type QueryResult struct {
 	QueryID       uuid.UUID
 	Scores        []float32 // one per grid pixel (row-major), nil if lazy-loaded
-	BestPinIndex  []uint8   // which pin was the best match per pixel
+	BestPinIndex  []uint8   // which pin was the best match per pixel; nil when there is one reference
 	Width         int
 	Height        int
 	ComputeMs     int64

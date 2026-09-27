@@ -54,9 +54,10 @@ type BiophysicalData struct {
 
 // HealthResponse is returned for GET /api/health.
 type HealthResponse struct {
-	Status     string `json:"status"`
-	GridLoaded bool   `json:"grid_loaded"`
-	GridPixels int    `json:"grid_pixels"`
-	LandPixels int    `json:"land_pixels"`
-	UptimeS    int64  `json:"uptime_s"`
+	Status      string `json:"status"`
+	GridLoaded  bool   `json:"grid_loaded"`
+	GridPixels  int    `json:"grid_pixels"`
+	LandPixels  int    `json:"land_pixels"`
+	SearchReady bool   `json:"search_ready"`
+	UptimeS     int64  `json:"uptime_s"`
 }

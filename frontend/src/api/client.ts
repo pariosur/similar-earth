@@ -126,6 +126,40 @@ export interface TopMatch {
   best_pin_index: number
 }
 
+export interface NaturalSearchMatch {
+  lat: number
+  lng: number
+  name: string
+  score: number
+  temperature_difference_c?: number
+}
+
+export interface NaturalSearchResponse {
+  matches?: NaturalSearchMatch[]
+  clarification?: string
+  context?: NaturalSearchContext
+  unsupported?: string[]
+  explanation?: string
+}
+
+export async function searchPlaces(prompt: string, context?: NaturalSearchContext): Promise<NaturalSearchResponse> {
+  const res = await fetch(`${BASE}/search`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prompt, context }),
+  })
+  const data = await res.json().catch(() => ({}))
+  if (!res.ok) throw new Error(data.error || `Search failed: ${res.status}`)
+  return data as NaturalSearchResponse
+}
+
+export interface NaturalSearchContext {
+  reference?: { name: string; lat?: number; lng?: number }
+  countries?: { include?: string[]; exclude?: string[] }
+  continents?: { include?: string[]; exclude?: string[] }
+  temperature?: { comparison?: 'warmer' | 'colder'; reference_c?: number; min_c?: number; max_c?: number }
+}
+
 export interface TopMatchesResponse {
   matches: TopMatch[]
   pin_labels: string[]

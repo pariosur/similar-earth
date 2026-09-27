@@ -51,6 +51,12 @@ func (s *Server) handleQuery(c *fiber.Ctx) error {
 		}
 	}
 
+	select {
+	case s.computeSlot <- struct{}{}:
+	default:
+		return c.Status(fiber.StatusTooManyRequests).JSON(fiber.Map{"error": "a similarity map is already being computed; try again shortly"})
+	}
+
 	// Create query ID.
 	queryID := uuid.New()
 
@@ -73,6 +79,7 @@ func (s *Server) handleQuery(c *fiber.Ctx) error {
 	pinsJSON, _ := json.Marshal(req.Pins)
 	ctx := c.Context()
 	if err := s.db.CreateQuery(ctx, queryID, pinsJSON, len(pins)); err != nil {
+		<-s.computeSlot
 		log.Printf("ERROR: CreateQuery: %v", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "failed to persist query",
@@ -93,6 +100,7 @@ func (s *Server) handleQuery(c *fiber.Ctx) error {
 
 	// Compute similarity in background goroutine.
 	go func() {
+		defer func() { <-s.computeSlot }()
 		start := time.Now()
 		result, err := s.engine.Compute(query)
 		computeMs := time.Since(start).Milliseconds()
@@ -102,9 +110,7 @@ func (s *Server) handleQuery(c *fiber.Ctx) error {
 			_ = s.db.FailQuery(ctx, queryID, err.Error())
 		} else {
 			// Store result in memory.
-			s.queriesMu.Lock()
-			s.queries[queryID] = result
-			s.queriesMu.Unlock()
+			s.storeQueryResult(queryID, result)
 
 			_ = s.db.CompleteQuery(ctx, queryID, int(computeMs))
 			log.Printf("Query %s completed in %dms (%d pins)", queryID, computeMs, len(pins))
@@ -127,6 +133,30 @@ func (s *Server) handleQuery(c *fiber.Ctx) error {
 	})
 }
 
+const queryResultTTL = 15 * time.Minute
+
+func (s *Server) storeQueryResult(id uuid.UUID, result *similarity.QueryResult) {
+	expires := time.Now().Add(queryResultTTL)
+	s.queriesMu.Lock()
+	for existing, deadline := range s.queryExpiry {
+		if !time.Now().Before(deadline) || existing != id {
+			delete(s.queries, existing)
+			delete(s.queryExpiry, existing)
+		}
+	}
+	s.queries[id] = result
+	s.queryExpiry[id] = expires
+	s.queriesMu.Unlock()
+	time.AfterFunc(queryResultTTL, func() {
+		s.queriesMu.Lock()
+		if s.queryExpiry[id].Equal(expires) {
+			delete(s.queries, id)
+			delete(s.queryExpiry, id)
+		}
+		s.queriesMu.Unlock()
+	})
+}
+
 // handleLayers serves GET /api/layers — list available pre-computed layers with metadata.
 func (s *Server) handleLayers(c *fiber.Ctx) error {
 	layerIDs := s.precomputed.LayerIDs()
@@ -137,15 +167,15 @@ func (s *Server) handleLayers(c *fiber.Ctx) error {
 		Label string  `json:"label,omitempty"`
 	}
 	type layerInfo struct {
-		ID          string      `json:"id"`
-		Name        string      `json:"name"`
-		Description string      `json:"description,omitempty"`
-		Category    string      `json:"category"`
+		ID          string     `json:"id"`
+		Name        string     `json:"name"`
+		Description string     `json:"description,omitempty"`
+		Category    string     `json:"category"`
 		PinCount    int        `json:"pin_count"`
 		Pins        []pinCoord `json:"pins"`
-		TileURL     string      `json:"tile_url"`
-		Featured    bool        `json:"featured"`
-		HasTiles    bool        `json:"has_tiles"`
+		TileURL     string     `json:"tile_url"`
+		Featured    bool       `json:"featured"`
+		HasTiles    bool       `json:"has_tiles"`
 	}
 
 	// Sort: featured first, then has_tiles, then alphabetical
@@ -184,11 +214,11 @@ func (s *Server) handleLayers(c *fiber.Ctx) error {
 			Name:        name,
 			Description: description,
 			Category:    category,
-			PinCount: pinCount,
-			Pins:      layerPins,
-			TileURL:   fmt.Sprintf("/tiles/%s/{z}/{x}/{y}.png", id),
-			Featured:  featured,
-			HasTiles:  hasTiles,
+			PinCount:    pinCount,
+			Pins:        layerPins,
+			TileURL:     fmt.Sprintf("/tiles/%s/{z}/{x}/{y}.png", id),
+			Featured:    featured,
+			HasTiles:    hasTiles,
 		})
 	}
 
@@ -209,8 +239,8 @@ func (s *Server) handleLayers(c *fiber.Ctx) error {
 // Global daily COG request counter to prevent GEE credit abuse.
 var (
 	cogDailyCount atomic.Int64
-	cogDailyDate  atomic.Int64 // unix day number
-	cogDailyLimit int64 = 5000 // max COG requests per day
+	cogDailyDate  atomic.Int64        // unix day number
+	cogDailyLimit int64        = 5000 // max COG requests per day
 )
 
 func cogDailyAllowed() bool {
@@ -787,7 +817,9 @@ func (s *Server) handlePoint(c *fiber.Ctx) error {
 		idx := row*result.Width + col
 		if idx >= 0 && idx < len(result.Scores) {
 			sim = float64(result.Scores[idx])
-			bestIdx = int(result.BestPinIndex[idx])
+			if idx < len(result.BestPinIndex) {
+				bestIdx = int(result.BestPinIndex[idx])
+			}
 		}
 	}
 
@@ -896,11 +928,12 @@ func (s *Server) handleExport(c *fiber.Ctx) error {
 // handleHealth serves GET /api/health.
 func (s *Server) handleHealth(c *fiber.Ctx) error {
 	return c.JSON(HealthResponse{
-		Status:     "ok",
-		GridLoaded: s.grid != nil,
-		GridPixels: s.grid.PixelCount(),
-		LandPixels: s.grid.LandPixelCount(),
-		UptimeS:    int64(time.Since(s.startTime).Seconds()),
+		Status:      "ok",
+		GridLoaded:  s.grid != nil,
+		GridPixels:  s.grid.PixelCount(),
+		LandPixels:  s.grid.LandPixelCount(),
+		SearchReady: s.searchData != nil,
+		UptimeS:     int64(time.Since(s.startTime).Seconds()),
 	})
 }
 

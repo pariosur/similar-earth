@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { MapGallery } from './MapGallery'
+import { NaturalSearch, type NaturalSearchState } from './NaturalSearch'
 import { CreateMap } from './CreateMap'
 import { PointInspection } from './PointInspection'
 import { MapChipStrip } from '../map/MapChipStrip'
@@ -21,6 +22,10 @@ interface SidePanelProps {
 
 export function SidePanel({ open, onToggle, onFlyTo, onCollapse }: SidePanelProps) {
   const [tab, setTab] = useState<Tab>('browse')
+  const [browseView, setBrowseView] = useState<'search' | 'gallery'>('search')
+  const [naturalSearch, setNaturalSearch] = useState<NaturalSearchState>({
+    prompt: '', matches: [], clarification: '', explanation: '', error: '', loading: false, exploring: null,
+  })
   const themePreference = useThemeStore((s) => s.preference)
   const setTheme = useThemeStore((s) => s.setTheme)
   const isMobile = useIsMobile()
@@ -140,9 +145,17 @@ export function SidePanel({ open, onToggle, onFlyTo, onCollapse }: SidePanelProp
       {open && (
         <>
           <div className={`flex-1 overflow-y-auto ${isMobile ? 'px-4 py-4' : 'px-8 py-6'}`}>
-            {tab === 'about' ? <HowItWorks onClose={() => setTab('browse')} onCreateClick={() => { setTab('create'); if (isMobile) { useQueryStore.getState().setCreateMode(true); onCollapse?.() } }} /> :
-             tab === 'browse' ? <MapGallery /> :
-             <CreateMap onPublished={() => setTab('browse')} />}
+            {tab === 'about' && <HowItWorks onClose={() => setTab('browse')} onCreateClick={() => { setTab('create'); if (isMobile) { useQueryStore.getState().setCreateMode(true); onCollapse?.() } }} />}
+            <div className={tab === 'browse' && browseView === 'search' ? '' : 'hidden'}>
+              <NaturalSearch state={naturalSearch} setState={setNaturalSearch} onFlyTo={onFlyTo} onBack={() => setBrowseView('gallery')} />
+            </div>
+            <div className={tab === 'browse' && browseView === 'gallery' ? '' : 'hidden'}>
+              <button onClick={() => setBrowseView('search')} className="mb-4 flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-gold hover:text-gold/80">
+                <span className="material-symbols-outlined text-sm">search</span> Search places
+              </button>
+              <MapGallery />
+            </div>
+            {tab === 'create' && <CreateMap onPublished={() => { setTab('browse'); setBrowseView('gallery') }} />}
           </div>
 
           {/* Point inspection */}
