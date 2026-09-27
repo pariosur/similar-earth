@@ -107,7 +107,7 @@ export function SidePanel({ open, onToggle, onFlyTo, onCollapse }: SidePanelProp
         </div>
         {/* Row 2: Description — full width */}
         <p className="text-sm text-fg-80 mt-3 leading-relaxed">
-          Comparing every 10m of Earth using satellite data to find places that look like the ones you pin.
+          Find places anywhere on Earth that look like the ones you know.
         </p>
 
         {/* Tabs — only show when open */}
