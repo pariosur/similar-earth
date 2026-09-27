@@ -37,6 +37,9 @@ data/grid.bin
 data/search_metadata.bin
 data/search_metadata.json
 data/scores_*.bin
+data/cities*.zip
+data/admin1CodesASCII.txt
+data/countryInfo.txt
 tiles/
 scripts/data/*.tif
 scripts/data/*.npy

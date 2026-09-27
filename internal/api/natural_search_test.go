@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 	"time"
@@ -11,6 +13,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/pariosur/tierraai/internal/similarity"
 
+	"github.com/pariosur/tierraai/internal/gazetteer"
 	"github.com/pariosur/tierraai/internal/grid"
 )
 
@@ -203,5 +206,28 @@ func TestClarificationSkippedForTheme(t *testing.T) {
 	}
 	if _, ask := clarificationFor(parsedSearch{}, &searchContext{Theme: "glaciers"}); ask {
 		t.Fatal("asked despite a theme in the current context")
+	}
+}
+
+func TestNameMatchesOffline(t *testing.T) {
+	dir := t.TempDir()
+	dump := "1\tHualañé\tHualane\t\t-34.97\t-71.80\tP\tPPL\tCL\t\t07\n"
+	if err := os.WriteFile(filepath.Join(dir, "cities.txt"), []byte(dump), 0600); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(dir, "countryInfo.txt"), []byte("CL\tCHL\t152\tCI\tChile\n"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	g, err := gazetteer.Load(filepath.Join(dir, "cities.txt"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	s := &Server{gazetteer: g}
+	names := s.nameMatchesOffline([]similarity.TopMatch{{Lat: -34.98, Lng: -71.81}, {Lat: -35.5, Lng: -71.8}})
+	if names[0] != "Hualañé, Chile" {
+		t.Fatalf("near match named %q", names[0])
+	}
+	if !strings.HasPrefix(names[1], "59 km from Hualañé") {
+		t.Fatalf("far match named %q, want a distance to the nearest town", names[1])
 	}
 }

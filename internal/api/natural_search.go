@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"math"
 	"net/http"
 	"net/url"
@@ -83,10 +84,19 @@ type geonamesResult struct {
 
 type geonamesResponse struct {
 	Results []geonamesResult `json:"geonames"`
+	// Set instead of results on errors, e.g. when the hourly credit limit is used up
+	Status *struct {
+		Message string `json:"message"`
+	} `json:"status"`
 }
+
+// errGeocoderUnavailable means GeoNames refused the lookup (credit limit, outage),
+// as opposed to finding no such place.
+var errGeocoderUnavailable = errors.New("place lookup is temporarily unavailable")
 
 var (
 	placeNameCache   sync.Map // "lat,lng" rounded to 0.01° -> GeoNames place label
+	referenceCache   sync.Map // lowercased query -> searchReference
 	searchDailyCount atomic.Int64
 	searchDailyDate  atomic.Int64
 )
@@ -151,6 +161,9 @@ func (s *Server) handleNaturalSearch(c *fiber.Ctx) error {
 		var ambiguous *ambiguousPlaceError
 		if errors.As(err, &ambiguous) {
 			return c.JSON(fiber.Map{"clarification": "Which place did you mean: " + strings.Join(ambiguous.names, "; ") + "?", "context": req.Context})
+		}
+		if errors.Is(err, errGeocoderUnavailable) {
+			return c.Status(fiber.StatusServiceUnavailable).JSON(fiber.Map{"error": "Place lookup is busy right now. Try again in a few minutes, or search for a kind of place like \"mangrove coasts\"."})
 		}
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
@@ -461,6 +474,12 @@ func containsFold(values []string, item string) bool {
 }
 
 func geocodeReference(query string) (*searchReference, error) {
+	// Popular references ("Tuscany") repeat; each GeoNames lookup costs a credit.
+	cacheKey := strings.ToLower(strings.TrimSpace(query))
+	if cached, ok := referenceCache.Load(cacheKey); ok {
+		ref := cached.(searchReference)
+		return &ref, nil
+	}
 	username := os.Getenv("GEONAMES_USERNAME")
 	if username == "" {
 		return nil, fmt.Errorf("GEONAMES_USERNAME is not configured")
@@ -469,15 +488,19 @@ func geocodeReference(query string) (*searchReference, error) {
 	client := &http.Client{Timeout: 5 * time.Second}
 	resp, err := client.Get(u)
 	if err != nil {
-		return nil, err
+		return nil, errGeocoderUnavailable
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("geocoder returned %s", resp.Status)
+		return nil, errGeocoderUnavailable
 	}
 	var data geonamesResponse
 	if err := json.NewDecoder(io.LimitReader(resp.Body, 64*1024)).Decode(&data); err != nil {
 		return nil, err
+	}
+	if data.Status != nil {
+		log.Printf("WARN: GeoNames search failed: %s", data.Status.Message)
+		return nil, errGeocoderUnavailable
 	}
 	if len(data.Results) == 0 {
 		return nil, fmt.Errorf("place not found")
@@ -493,7 +516,9 @@ func geocodeReference(query string) (*searchReference, error) {
 	if _, err := fmt.Sscan(selected.Lng, &lngValue); err != nil {
 		return nil, err
 	}
-	return &searchReference{Name: geonamesLabel(*selected), Lat: latValue, Lng: lngValue}, nil
+	ref := searchReference{Name: geonamesLabel(*selected), Lat: latValue, Lng: lngValue}
+	referenceCache.Store(cacheKey, ref)
+	return &ref, nil
 }
 
 type ambiguousPlaceError struct{ names []string }
@@ -569,6 +594,9 @@ func geonamesLabel(place geonamesResult) string {
 }
 
 func (s *Server) reverseGeocodeMatches(ctx context.Context, matches []similarity.TopMatch) []string {
+	if s.gazetteer != nil {
+		return s.nameMatchesOffline(matches)
+	}
 	names := make([]string, len(matches))
 	username := os.Getenv("GEONAMES_USERNAME")
 	if username == "" {
@@ -668,4 +696,31 @@ func clarificationFor(parsed parsedSearch, current *searchContext) (string, bool
 		return parsed.Clarification, true
 	}
 	return "Which place should the results look like?", true
+}
+
+// Offline naming: results within nameNearKm get the town's name; farther ones
+// say how far the nearest town is ("120 km from Tamanrasset, Algeria").
+const (
+	nameNearKm   = 25
+	nameSearchKm = 150
+)
+
+func (s *Server) nameMatchesOffline(matches []similarity.TopMatch) []string {
+	names := make([]string, len(matches))
+	for i, match := range matches {
+		if place, km, ok := s.gazetteer.Nearest(match.Lat, match.Lng, nameSearchKm); ok {
+			names[i] = place.Label()
+			if km > nameNearKm {
+				names[i] = fmt.Sprintf("%.0f km from %s", km, names[i])
+			}
+			continue
+		}
+		name := ""
+		if row, col, ok := s.grid.LatLngToRowCol(match.Lat, match.Lng); ok {
+			country, _, _ := s.searchData.At(row*int(s.grid.Width) + col)
+			name = country.Name
+		}
+		names[i] = strings.TrimSuffix(fmt.Sprintf("%.2f°, %.2f°, %s", match.Lat, match.Lng, name), ", ")
+	}
+	return names
 }

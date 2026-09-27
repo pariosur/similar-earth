@@ -19,6 +19,7 @@ import (
 
 	"github.com/pariosur/tierraai/internal/cog"
 	"github.com/pariosur/tierraai/internal/db"
+	"github.com/pariosur/tierraai/internal/gazetteer"
 	"github.com/pariosur/tierraai/internal/gee"
 	"github.com/pariosur/tierraai/internal/grid"
 	"github.com/pariosur/tierraai/internal/searchdata"
@@ -61,6 +62,7 @@ type Server struct {
 	layerMeta   map[string]LayerMeta
 	searchData  *searchdata.Data
 	searchSlots chan struct{}
+	gazetteer   *gazetteer.Gazetteer // offline place names for search results; nil = GeoNames API
 }
 
 // NewServer creates the API server with all dependencies wired up.
@@ -116,6 +118,16 @@ func NewServer(g *grid.Grid, database *db.DB, geeClient *gee.Client, cogClient *
 		}
 	} else {
 		log.Printf("Natural search disabled: metadata file %s is missing", metadataPath)
+	}
+	gazetteerPath := os.Getenv("GAZETTEER_PATH")
+	if gazetteerPath == "" {
+		gazetteerPath = "./data/cities5000.zip"
+	}
+	if g, err := gazetteer.Load(gazetteerPath); err == nil {
+		s.gazetteer = g
+		log.Printf("Loaded %d places from %s for offline result names", g.Len(), gazetteerPath)
+	} else {
+		log.Printf("Offline place names unavailable (%v); naming results via the GeoNames API", err)
 	}
 
 	// Middleware
