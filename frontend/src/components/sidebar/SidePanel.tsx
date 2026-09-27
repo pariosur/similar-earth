@@ -195,24 +195,26 @@ function HowItWorks({ onClose, onCreateClick }: { onClose: () => void; onCreateC
   const activeMapName = useQueryStore((s) => s.activeMapName)
   const pins = useQueryStore((s) => s.pins)
   const createMode = useQueryStore((s) => s.createMode)
+  // The gallery map's name only describes the screen while it's shown
+  const showingMap = useSearchStore((s) => s.mapMode) === 'gallery'
 
   return (
     <div className="space-y-6">
       <h2 className="text-[11px] font-bold uppercase tracking-[0.2em] text-fg-40">How It Works</h2>
 
       <p className="text-xs text-fg-50 leading-relaxed">
-        {activeMapName
+        {showingMap && activeMapName
           ? `This map compares every land area on Earth against ${pins.length} ${activeMapName} reference pins using satellite data.`
-          : createMode
+          : showingMap && createMode
             ? `This map will compare Earth against your ${pins.length} selected reference pins.`
-            : 'Each map shows places on Earth that look similar to a set of reference pins, based on satellite data.'}
+            : 'Find places that look alike from space: describe one, browse curated maps, or pin your own.'}
       </p>
 
       <div className="flex gap-4">
         <div className="w-6 h-6 bg-navy-light text-gold flex items-center justify-center shrink-0 text-[11px] font-bold">1</div>
         <div>
-          <h3 className="text-sm font-semibold text-fg">Pin places you know</h3>
-          <p className="text-xs text-fg-40 mt-1 leading-relaxed">Farms, beaches, forests, solar panels, anything.</p>
+          <h3 className="text-sm font-semibold text-fg">Describe or pin a place</h3>
+          <p className="text-xs text-fg-40 mt-1 leading-relaxed">“Places like Tuscany, outside Europe”, “mangrove coasts in Africa”, or pins on the map.</p>
         </div>
       </div>
 
@@ -220,7 +222,7 @@ function HowItWorks({ onClose, onCreateClick }: { onClose: () => void; onCreateC
         <div className="w-6 h-6 bg-navy-light text-gold flex items-center justify-center shrink-0 text-[11px] font-bold">2</div>
         <div>
           <h3 className="text-sm font-semibold text-fg">We scan the planet</h3>
-          <p className="text-xs text-fg-40 mt-1 leading-relaxed">Your pins get compared against every land pixel on Earth using satellite embeddings.</p>
+          <p className="text-xs text-fg-40 mt-1 leading-relaxed">Your reference is compared against every land pixel on Earth using satellite embeddings.</p>
         </div>
       </div>
 
@@ -228,7 +230,7 @@ function HowItWorks({ onClose, onCreateClick }: { onClose: () => void; onCreateC
         <div className="w-6 h-6 bg-navy-light text-gold flex items-center justify-center shrink-0 text-[11px] font-bold">3</div>
         <div>
           <h3 className="text-sm font-semibold text-fg">See what matches</h3>
-          <p className="text-xs text-fg-40 mt-1 leading-relaxed">A place lights up if it looks like any of your pins. Gold = moderate, red = strong match. Zoom in for 10m detail.</p>
+          <p className="text-xs text-fg-40 mt-1 leading-relaxed">Search results are numbered on the map. Heatmaps go gold (moderate) to red (strong). Zoom in for 10m detail.</p>
         </div>
       </div>
 
@@ -269,7 +271,7 @@ function HowItWorks({ onClose, onCreateClick }: { onClose: () => void; onCreateC
 
       <div className="border-t border-fg-08 pt-5">
         <p className="text-xs text-fg-30 leading-relaxed">
-          Built on <a href="https://developers.google.com/earth-engine/datasets/catalog/GOOGLE_SATELLITE_EMBEDDING_V1_ANNUAL" target="_blank" rel="noopener noreferrer" className="text-gold hover:underline">Google AlphaEarth</a> satellite embeddings (2025). 10m resolution. Open source.
+          Built on <a href="https://developers.google.com/earth-engine/datasets/catalog/GOOGLE_SATELLITE_EMBEDDING_V1_ANNUAL" target="_blank" rel="noopener noreferrer" className="text-gold hover:underline">Google AlphaEarth</a> satellite embeddings (2025), with ERA5-Land temperature and GeoNames place names. Open source.
         </p>
       </div>
 
