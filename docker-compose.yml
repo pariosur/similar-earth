@@ -13,6 +13,11 @@ services:
       - DATABASE_URL=postgres://tierraai:tierraai@postgres:5432/tierraai?sslmode=disable
       - GEE_SERVICE_URL=http://gee:8001
       - GRID_PATH=/app/data/grid.bin
+      - SEARCH_METADATA_PATH=/app/data/search_metadata.bin
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - GEONAMES_USERNAME=${GEONAMES_USERNAME:-}
+      - SEARCH_DAILY_LIMIT=${SEARCH_DAILY_LIMIT:-500}
+      - TRUSTED_PROXIES=${TRUSTED_PROXIES:-}
       - CACHE_DIR=/app/cache
     depends_on:
       postgres:
