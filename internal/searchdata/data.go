@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/pariosur/tierraai/internal/grid"
+	"github.com/pariosur/tierraai/internal/mmapfile"
 )
 
 var magic = [8]byte{'S', 'E', 'S', 'R', 'C', 'H', '0', '1'}
@@ -21,15 +22,24 @@ type Country struct {
 }
 
 type Data struct {
+	file      *mmapfile.File
 	pixels    []byte
 	countries map[uint16]Country
 }
 
-func Load(path string, g *grid.Grid) (*Data, error) {
-	pixels, err := os.ReadFile(path)
+// Load memory-maps the per-pixel metadata file so it sits in the page cache
+// rather than the Go heap. Call Preload to warm it.
+func Load(path string, g *grid.Grid) (data *Data, err error) {
+	file, err := mmapfile.Open(path)
 	if err != nil {
 		return nil, fmt.Errorf("read search metadata: %w", err)
 	}
+	defer func() {
+		if err != nil {
+			file.Close()
+		}
+	}()
+	pixels := file.Bytes()
 	if len(pixels) < 16 || string(pixels[:8]) != string(magic[:]) {
 		return nil, fmt.Errorf("invalid search metadata header")
 	}
@@ -57,7 +67,16 @@ func Load(path string, g *grid.Grid) (*Data, error) {
 		}
 		countries[country.ID] = country
 	}
-	return &Data{pixels: pixels[16:], countries: countries}, nil
+	return &Data{file: file, pixels: pixels[16:], countries: countries}, nil
+}
+
+// Preload faults the whole metadata file into the page cache.
+func (d *Data) Preload() int { return mmapfile.Touch(d.pixels) }
+
+// Close unmaps the metadata file. d must not be used afterwards.
+func (d *Data) Close() error {
+	d.pixels = nil
+	return d.file.Close()
 }
 
 func (d *Data) HasCountry(name string) bool {

@@ -1,8 +1,15 @@
 package grid
 
-import "math/bits"
+import (
+	"math/bits"
+	"sync"
+	"sync/atomic"
 
-// Grid holds a global embedding grid in memory.
+	"github.com/pariosur/tierraai/internal/mmapfile"
+)
+
+// Grid holds a global embedding grid. For grids loaded from disk, Data and
+// LandMask point into a read-only memory mapping and must not be written.
 type Grid struct {
 	Width  uint32
 	Height uint32
@@ -26,6 +33,11 @@ type Grid struct {
 	// CellWidth and CellHeight are the geographic size of a single pixel.
 	CellWidth  float64
 	CellHeight float64
+
+	file     *mmapfile.File // backing mapping; nil for in-memory grids
+	warm     atomic.Bool    // set once Preload finishes
+	landOnce sync.Once
+	land     []int32
 }
 
 // IsLand returns true if the pixel at (row, col) is land.
@@ -79,25 +91,29 @@ func (g *Grid) LandPixelCount() int {
 	return count
 }
 
-// LandPixelIndices returns a slice of all land pixel indices (flat row-major).
-// This is cached after first call for repeated use.
-func (g *Grid) LandPixelIndices() []int {
-	total := g.PixelCount()
-	indices := make([]int, 0, g.LandPixelCount())
-	for byteIdx, b := range g.LandMask {
-		if b == 0 {
-			continue
-		}
-		for bit := 7; bit >= 0; bit-- {
-			if b&(1<<uint(bit)) != 0 {
-				px := byteIdx*8 + (7 - bit)
-				if px < total {
-					indices = append(indices, px)
+// LandPixelIndices returns all land pixel indices (flat row-major). It is
+// computed on first call and shared afterwards, so callers must not modify it.
+// Indices are int32 to halve its size; the global grid has ~139M pixels.
+func (g *Grid) LandPixelIndices() []int32 {
+	g.landOnce.Do(func() {
+		total := g.PixelCount()
+		indices := make([]int32, 0, g.LandPixelCount())
+		for byteIdx, b := range g.LandMask {
+			if b == 0 {
+				continue
+			}
+			for bit := 7; bit >= 0; bit-- {
+				if b&(1<<uint(bit)) != 0 {
+					px := byteIdx*8 + (7 - bit)
+					if px < total {
+						indices = append(indices, int32(px))
+					}
 				}
 			}
 		}
-	}
-	return indices
+		g.land = indices
+	})
+	return g.land
 }
 
 // LatLngToRowCol converts geographic coordinates to grid row and column.

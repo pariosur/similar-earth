@@ -9,8 +9,10 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
+	"unsafe"
 
 	"github.com/google/uuid"
+	"github.com/pariosur/tierraai/internal/mmapfile"
 )
 
 // PrecomputedStore holds pre-loaded similarity results for known layers.
@@ -135,37 +137,41 @@ func loadScoresFile(path string) (*QueryResult, error) {
 	}, nil
 }
 
-// EnsureLoaded loads the scores from disk if not already in memory.
+// EnsureLoaded maps the scores file on first use. Scores and BestPinIndex
+// point into the read-only mapping, so they sit in the page cache: the kernel
+// only reads the parts a request touches and can drop them under memory
+// pressure, rather than each layer pinning ~700 MB of heap for good.
 func (r *QueryResult) EnsureLoaded() error {
+	r.loadMu.Lock()
+	defer r.loadMu.Unlock()
 	if r.Scores != nil {
 		return nil
 	}
 	if r.scoresPath == "" {
 		return fmt.Errorf("no scores path set")
 	}
+	if !mmapfile.LittleEndian() {
+		return fmt.Errorf("scores files are little-endian; host is not")
+	}
 
-	f, err := os.Open(r.scoresPath)
+	file, err := mmapfile.Open(r.scoresPath)
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	buf := file.Bytes()
 
+	// Layout: 16-byte header, float32 scores, uint8 best_pin, ref embeddings.
 	total := r.Width * r.Height
-
-	// Skip 16-byte header
-	if _, err := f.Seek(16, 0); err != nil {
-		return err
+	scoresOff, bestPinOff := 16, 16+total*4
+	if total == 0 || len(buf) < bestPinOff+total {
+		file.Close()
+		return fmt.Errorf("scores file %s truncated: %d bytes, want at least %d", r.scoresPath, len(buf), bestPinOff+total)
 	}
 
-	r.Scores = make([]float32, total)
-	if err := binary.Read(f, binary.LittleEndian, r.Scores); err != nil {
-		return fmt.Errorf("read scores: %w", err)
-	}
-
-	r.BestPinIndex = make([]uint8, total)
-	if _, err := io.ReadFull(f, r.BestPinIndex); err != nil {
-		return fmt.Errorf("read best_pin: %w", err)
-	}
-
+	// The mapping is page-aligned and the header is 16 bytes, so the float32
+	// section is 4-byte aligned and can be viewed in place. The mapping is
+	// never unmapped: layers stay addressable for the life of the process.
+	r.Scores = unsafe.Slice((*float32)(unsafe.Pointer(&buf[scoresOff])), total)
+	r.BestPinIndex = buf[bestPinOff : bestPinOff+total : bestPinOff+total]
 	return nil
 }

@@ -56,6 +56,7 @@ type BiophysicalData struct {
 type HealthResponse struct {
 	Status      string `json:"status"`
 	GridLoaded  bool   `json:"grid_loaded"`
+	GridWarm    bool   `json:"grid_warm"`
 	GridPixels  int    `json:"grid_pixels"`
 	LandPixels  int    `json:"land_pixels"`
 	SearchReady bool   `json:"search_ready"`

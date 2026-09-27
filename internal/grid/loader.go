@@ -3,25 +3,40 @@ package grid
 import (
 	"encoding/binary"
 	"fmt"
-	"io"
 	"log"
 	"math"
-	"os"
+	"unsafe"
+
+	"github.com/pariosur/tierraai/internal/mmapfile"
 )
 
-// LoadGrid reads a grid.bin file and returns an in-memory Grid.
+// LoadGrid memory-maps a grid.bin file. The embeddings and land mask point
+// straight into the mapping, so they live in the OS page cache (evictable,
+// never swapped) instead of the Go heap. Call Preload to warm the cache.
 func LoadGrid(path string) (*Grid, error) {
-	f, err := os.Open(path)
+	file, err := mmapfile.Open(path)
 	if err != nil {
 		return nil, fmt.Errorf("open grid file: %w", err)
 	}
-	defer f.Close()
-
-	// Read header.
-	header := make([]byte, HeaderSize)
-	if _, err := io.ReadFull(f, header); err != nil {
-		return nil, fmt.Errorf("read header: %w", err)
+	g, err := parseGrid(file.Bytes())
+	if err != nil {
+		file.Close()
+		return nil, err
 	}
+	g.file = file
+
+	log.Printf("Grid mapped: %dx%d (%d pixels), data=%.1f MB, mask=%.1f KB",
+		g.Width, g.Height, g.PixelCount(),
+		float64(len(g.Data))/(1024*1024), float64(len(g.LandMask))/1024)
+
+	return g, nil
+}
+
+func parseGrid(buf []byte) (*Grid, error) {
+	if len(buf) < HeaderSize {
+		return nil, fmt.Errorf("read header: file is %d bytes, want at least %d", len(buf), HeaderSize)
+	}
+	header := buf[:HeaderSize]
 
 	// Validate magic bytes.
 	magic := string(header[0:8])
@@ -58,35 +73,22 @@ func LoadGrid(path string) (*Grid, error) {
 		g.Offset[i] = math.Float32frombits(binary.LittleEndian.Uint32(header[off : off+4]))
 	}
 
-	// Read data section.
+	// Data section, then the bit-packed land mask.
 	pixelCount := int(g.Width) * int(g.Height)
 	dataSize := pixelCount * BandsPerPixel
-	dataBuf := make([]byte, dataSize)
-	if _, err := io.ReadFull(f, dataBuf); err != nil {
-		return nil, fmt.Errorf("read data section: %w", err)
-	}
-	g.Data = make([]int8, dataSize)
-	for i, b := range dataBuf {
-		g.Data[i] = int8(b)
-	}
-
-	// Read land mask section.
 	maskSize := (pixelCount + 7) / 8
-	g.LandMask = make([]byte, maskSize)
-	if _, err := io.ReadFull(f, g.LandMask); err != nil {
-		return nil, fmt.Errorf("read land mask: %w", err)
+	if len(buf) < HeaderSize+dataSize+maskSize {
+		return nil, fmt.Errorf("grid file truncated: %d bytes, want %d", len(buf), HeaderSize+dataSize+maskSize)
 	}
+	if dataSize > 0 {
+		// int8 and byte share a layout, so view the mapped bytes in place.
+		g.Data = unsafe.Slice((*int8)(unsafe.Pointer(&buf[HeaderSize])), dataSize)
+	}
+	g.LandMask = buf[HeaderSize+dataSize : HeaderSize+dataSize+maskSize : HeaderSize+dataSize+maskSize]
 
 	// Compute cell dimensions.
 	g.CellWidth = (g.East - g.West) / float64(g.Width)
 	g.CellHeight = (g.North - g.South) / float64(g.Height)
-
-	landCount := g.LandPixelCount()
-	dataMB := float64(dataSize) / (1024 * 1024)
-	maskKB := float64(maskSize) / 1024
-
-	log.Printf("Grid loaded: %dx%d (%d pixels, %d land), data=%.1f MB, mask=%.1f KB",
-		g.Width, g.Height, pixelCount, landCount, dataMB, maskKB)
 
 	return g, nil
 }

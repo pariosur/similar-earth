@@ -1,6 +1,10 @@
 package similarity
 
-import "github.com/google/uuid"
+import (
+	"sync"
+
+	"github.com/google/uuid"
+)
 
 // Pin represents a geographic reference point selected by the user.
 type Pin struct {
@@ -29,4 +33,6 @@ type QueryResult struct {
 	ComputeMs     int64
 	RefEmbeddings [][]int8 // reference embeddings for COG refinement
 	scoresPath    string   // path to scores file for lazy loading
+
+	loadMu sync.Mutex // guards lazy loading of Scores and BestPinIndex
 }
