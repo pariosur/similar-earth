@@ -2,11 +2,24 @@ import { useEffect, useRef } from 'react'
 import type maplibregl from 'maplibre-gl'
 import { useQueryStore } from '../../stores/queryStore'
 import { useSearchStore } from '../../stores/searchStore'
+import { useThemeStore, type Basemap, type ResolvedTheme } from '../../stores/themeStore'
+import { setImageryDimmed } from '../../hooks/useMapInit'
 
 const SOURCE_ID = 'similarity-tiles'
 const LAYER_ID = 'similarity-layer'
 const HD_SOURCE_ID = 'similarity-tiles-hd'
 const HD_LAYER_ID = 'similarity-layer-hd'
+
+// Tiles are rendered for a dark basemap. On the light basemap the pale yellow low end
+// washes out, so deepen and saturate it there. (Satellite dims the imagery instead.)
+function colorPaint(theme: ResolvedTheme, basemap: Basemap) {
+  const light = basemap === 'map' && theme === 'light'
+  return {
+    'raster-brightness-max': light ? 0.78 : 1,
+    'raster-saturation': light ? 0.45 : 0,
+    'raster-contrast': light ? 0.15 : 0,
+  }
+}
 
 interface HeatmapLayerProps {
   map: maplibregl.Map
@@ -23,6 +36,9 @@ export function HeatmapLayer({ map }: HeatmapLayerProps) {
   const hdTileUrl = isSearch ? null : galleryHdTileUrl
   const hdState = useQueryStore((s) => s.hdState)
   const setHdState = useQueryStore((s) => s.setHdState)
+  const opacity = useThemeStore((s) => s.heatmapOpacity)
+  const theme = useThemeStore((s) => s.resolved)
+  const basemap = useThemeStore((s) => s.basemap)
   const prevTileUrl = useRef<string | null>(null)
   const prevHdTileUrl = useRef<string | null>(null)
 
@@ -57,7 +73,6 @@ export function HeatmapLayer({ map }: HeatmapLayerProps) {
       id: LAYER_ID,
       type: 'raster',
       source: SOURCE_ID,
-      paint: { 'raster-opacity': 0.7 },
     }, firstLabel?.id)
   }, [tileUrl, map])
 
@@ -87,9 +102,20 @@ export function HeatmapLayer({ map }: HeatmapLayerProps) {
       type: 'raster',
       source: HD_SOURCE_ID,
       minzoom: 9,
-      paint: { 'raster-opacity': 0.85 },
     }, firstLabel?.id)
   }, [hdTileUrl, map])
+
+  // Opacity + per-basemap treatment; runs after the layers above are (re)added
+  useEffect(() => {
+    const paint = { ...colorPaint(theme, basemap), 'raster-opacity': opacity }
+    for (const id of [LAYER_ID, HD_LAYER_ID]) {
+      if (!map.getLayer(id)) continue
+      for (const [prop, value] of Object.entries(paint)) {
+        map.setPaintProperty(id, prop, value)
+      }
+    }
+    setImageryDimmed(map, !!tileUrl)
+  }, [tileUrl, hdTileUrl, opacity, theme, basemap, map])
 
   // Track HD tile loading → loaded transition
   useEffect(() => {

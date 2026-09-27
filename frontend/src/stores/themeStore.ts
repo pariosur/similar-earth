@@ -8,8 +8,11 @@ interface ThemeState {
   preference: ThemePreference
   resolved: ResolvedTheme
   basemap: Basemap
+  // Similarity heatmap opacity (0–1), set by the legend's slider
+  heatmapOpacity: number
   setTheme: (pref: ThemePreference) => void
   setBasemap: (basemap: Basemap) => void
+  setHeatmapOpacity: (opacity: number) => void
 }
 
 function getSystemTheme(): ResolvedTheme {
@@ -35,6 +38,8 @@ function apply(resolved: ResolvedTheme) {
 
 const stored = (localStorage.getItem('theme') as ThemePreference) || 'dark'
 const storedBasemap = (localStorage.getItem('basemap') as Basemap) || 'map'
+const storedOpacity = Number(localStorage.getItem('heatmapOpacity'))
+const initialOpacity = storedOpacity > 0 && storedOpacity <= 1 ? storedOpacity : 0.8
 
 export const useThemeStore = create<ThemeState>((set) => {
   const initial = resolve(stored)
@@ -55,6 +60,7 @@ export const useThemeStore = create<ThemeState>((set) => {
     preference: stored,
     resolved: initial,
     basemap: storedBasemap,
+    heatmapOpacity: initialOpacity,
     setTheme: (pref) => {
       localStorage.setItem('theme', pref)
       const resolved = resolve(pref)
@@ -64,6 +70,10 @@ export const useThemeStore = create<ThemeState>((set) => {
     setBasemap: (basemap) => {
       localStorage.setItem('basemap', basemap)
       set({ basemap })
+    },
+    setHeatmapOpacity: (heatmapOpacity) => {
+      localStorage.setItem('heatmapOpacity', String(heatmapOpacity))
+      set({ heatmapOpacity })
     },
   }
 })

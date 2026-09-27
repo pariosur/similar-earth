@@ -1,7 +1,8 @@
-import { useState, useCallback } from 'react'
+import { useCallback } from 'react'
 import { useQueryStore } from '../../stores/queryStore'
 import { useDiscoveries } from '../../hooks/useDiscoveries'
 import { useIsMobile } from '../../hooks/useIsMobile'
+import { useThemeStore } from '../../stores/themeStore'
 
 /**
  * On-map legend explaining marker types + similarity gradient + opacity control.
@@ -12,22 +13,13 @@ export function MapLegend() {
   const tileUrl = useQueryStore((s) => s.tileUrl)
   const isMobile = useIsMobile()
   const { discoveries } = useDiscoveries()
-  const [opacity, setOpacity] = useState(70)
+  const opacity = Math.round(useThemeStore((s) => s.heatmapOpacity) * 100)
+  const setHeatmapOpacity = useThemeStore((s) => s.setHeatmapOpacity)
 
+  // HeatmapLayer applies the value to the map layers
   const handleOpacity = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = parseInt(e.target.value)
-    setOpacity(val)
-    // Update MapLibre layer opacity
-    const mapEl = document.querySelector('.maplibregl-map') as any
-    const map = mapEl?.__maplibregl_map || (window as any).__map
-    if (!map) return
-    const layers = map.getStyle()?.layers || []
-    for (const layer of layers) {
-      if (layer.id?.startsWith('similarity-layer') && layer.type === 'raster') {
-        try { map.setPaintProperty(layer.id, 'raster-opacity', val / 100) } catch {}
-      }
-    }
-  }, [])
+    setHeatmapOpacity(parseInt(e.target.value) / 100)
+  }, [setHeatmapOpacity])
 
   if (!tileUrl || isMobile) return null
 
@@ -74,7 +66,7 @@ export function MapLegend() {
 
       {/* Data source */}
       <div className="pt-1 border-t" style={{ borderColor: 'var(--fg-08)' }}>
-        <span className="text-[8px] tracking-wider" style={{ color: 'var(--fg-20)' }}>
+        <span className="text-[9px] tracking-wider" style={{ color: 'var(--fg-40)' }}>
           <a href="https://developers.google.com/earth-engine/datasets/catalog/GOOGLE_SATELLITE_EMBEDDING_V1_ANNUAL" target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color: 'var(--fg-25)' }}>Google AlphaEarth</a> · 2km / 10m · 2025
         </span>
       </div>

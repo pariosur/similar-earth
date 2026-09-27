@@ -77,7 +77,7 @@ function MapChip({ map }: { map: MapInfo }) {
         <span className="material-symbols-outlined text-sm shrink-0">{icon}</span>
       )}
       <span className="whitespace-nowrap">{map.title}</span>
-      <span className="text-[8px] opacity-50">{map.pin_count}</span>
+      <span className="text-[9px] opacity-80">{map.pin_count}</span>
     </button>
   )
 }

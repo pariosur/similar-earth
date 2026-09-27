@@ -25,7 +25,7 @@ export function SelectionBanner() {
           <>
             <span className="text-[10px]" style={{ color: 'var(--fg-25)' }}>·</span>
             <span className="text-[10px]" style={{ color: 'var(--fg-50)' }}>
-              similar to <span style={{ color: 'var(--accent-primary)' }}>{d.similar_to}</span>
+              similar to <span style={{ color: 'var(--accent-text)' }}>{d.similar_to}</span>
             </span>
           </>
         )}
@@ -37,7 +37,7 @@ export function SelectionBanner() {
     const matchCount = discoveries.filter((d) => d.best_pin_index === selectedPinIndex).length
     content = (
       <>
-        <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: 'var(--accent-primary)' }}>
+        <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: 'var(--accent-text)' }}>
           Your Pin #{selectedPinIndex + 1}
         </span>
         <span className="text-[11px] font-bold" style={{ color: 'var(--fg-80)' }}>{pin.label || `${pin.lat.toFixed(2)}, ${pin.lng.toFixed(2)}`}</span>

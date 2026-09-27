@@ -322,14 +322,14 @@ function MapCard({ map }: { map: MapInfo }) {
           )}
           <div className="text-[11px] text-fg-50 mt-0.5">
             {map.pin_count} pins
-            {map.is_featured && <span className="ml-2 text-fg-20">{'\u00b7'} 2025</span>}
+            {map.is_featured && <span className="ml-2 text-fg-40">{'\u00b7'} 2025</span>}
             {map.stars > 0 && <span className="ml-2">{map.stars} {'\u2606'}</span>}
           </div>
         </div>
         <button
           onClick={handleStar}
           title={starred ? 'Starred' : 'Star this map'}
-          className={`text-sm transition-colors shrink-0 ${starred ? 'text-gold' : 'text-fg-20 hover:text-gold'}`}
+          className={`text-sm transition-colors shrink-0 ${starred ? 'text-gold' : 'text-fg-40 hover:text-gold'}`}
         >
           {starred ? '\u{2B50}' : '\u{2606}'}
         </button>
@@ -340,7 +340,7 @@ function MapCard({ map }: { map: MapInfo }) {
           <a
             href={`mailto:pariosur@gmail.com?subject=Report: ${encodeURIComponent(map.title)}&body=Map ID: ${map.id}%0AReason: `}
             onClick={(e) => e.stopPropagation()}
-            className="text-[9px] text-fg-20 hover:text-crimson uppercase tracking-wider font-bold transition-colors"
+            className="text-[9px] text-fg-40 hover:text-crimson uppercase tracking-wider font-bold transition-colors"
           >
             Report map
           </a>

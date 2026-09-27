@@ -20,6 +20,19 @@ function computeVectorStyle(theme: ResolvedTheme, basemap: Basemap): string {
 }
 
 /**
+ * Imagery's greens and browns swallow the heatmap's yellow-to-red ramp, so while a
+ * heatmap is shown the imagery is dimmed and desaturated — less so as you zoom in,
+ * where the ground detail is the point.
+ */
+export function setImageryDimmed(map: maplibregl.Map, dimmed: boolean) {
+  if (!map.getLayer(SAT_LAYER_ID)) return
+  map.setPaintProperty(SAT_LAYER_ID, 'raster-brightness-max',
+    dimmed ? ['interpolate', ['linear'], ['zoom'], 3, 0.55, 9, 0.75, 12, 0.9] : 1)
+  map.setPaintProperty(SAT_LAYER_ID, 'raster-saturation',
+    dimmed ? ['interpolate', ['linear'], ['zoom'], 3, -0.7, 9, -0.4, 12, -0.2] : 0)
+}
+
+/**
  * Toggle the Esri satellite raster in-place: add it as the bottom layer and hide the
  * opaque base fills so imagery shows through, keeping labels + lines on top. Reversible.
  *
@@ -45,6 +58,7 @@ function applyBasemap(map: maplibregl.Map, basemap: Basemap) {
         })
       }
       map.addLayer({ id: SAT_LAYER_ID, type: 'raster', source: SAT_SOURCE_ID }, firstNonBg?.id)
+      setImageryDimmed(map, layers.some((l) => l.id.startsWith('similarity-layer')))
     }
     // Hide opaque base layers so imagery is visible; keep symbols (labels) + lines.
     for (const l of map.getStyle().layers || []) {

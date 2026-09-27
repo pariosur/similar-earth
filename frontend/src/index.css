@@ -1,6 +1,10 @@
 @import "tailwindcss";
 
-/* ── Light mode (default) ── */
+/* ── Light mode (default) ──
+   Text tiers (fg-25…fg-80) meet WCAG AA 4.5:1 on the surfaces each mode renders on:
+   light glass over the light basemap needs alpha >= 0.65, dark glass over imagery >= 0.55,
+   the always-dark sidebar >= 0.45. fg-20 and below are for borders and disabled states.
+   --accent-text is the gold for text; --accent-primary stays for fills and strokes. */
 :root {
   --surface-primary: #ffffff;
   --surface-secondary: #f5f5f7;
@@ -13,15 +17,18 @@
   --accent-primary: #b8912a;
   --accent-dim: #9a7a22;
   --accent-bright: #d4a83c;
+  --accent-text: #76590f;
   --crimson: #B04632;
   --fg: #1a1a25;
-  --fg-80: rgba(26, 26, 37, 0.8);
-  --fg-60: rgba(26, 26, 37, 0.6);
-  --fg-50: rgba(26, 26, 37, 0.5);
-  --fg-40: rgba(26, 26, 37, 0.4);
-  --fg-30: rgba(26, 26, 37, 0.3);
-  --fg-25: rgba(26, 26, 37, 0.25);
+  --fg-80: rgba(26, 26, 37, 0.88);
+  --fg-70: rgba(26, 26, 37, 0.84);
+  --fg-60: rgba(26, 26, 37, 0.8);
+  --fg-50: rgba(26, 26, 37, 0.76);
+  --fg-40: rgba(26, 26, 37, 0.72);
+  --fg-30: rgba(26, 26, 37, 0.68);
+  --fg-25: rgba(26, 26, 37, 0.66);
   --fg-20: rgba(26, 26, 37, 0.2);
+  --fg-15: rgba(26, 26, 37, 0.15);
   --fg-10: rgba(26, 26, 37, 0.1);
   --fg-08: rgba(26, 26, 37, 0.08);
   --fg-06: rgba(26, 26, 37, 0.06);
@@ -31,11 +38,11 @@
   --ctrl-border: rgba(26, 26, 37, 0.12);
   --ctrl-shadow: rgba(0, 0, 0, 0.12);
   --pin-bg: #b8912a;
-  --pin-text: #ffffff;
+  --pin-text: #1a1a25;
   --pin-border: #d4a83c;
   --pin-shadow: rgba(184, 145, 42, 0.25);
   --pin-tooltip-bg: rgba(200, 216, 223, 0.95);
-  --pin-tooltip-text: #b8912a;
+  --pin-tooltip-text: #76590f;
   --scrollbar-thumb: rgba(184, 145, 42, 0.15);
   --scrollbar-thumb-hover: rgba(184, 145, 42, 0.3);
 
@@ -65,15 +72,18 @@
   --accent-primary: #E3B448;
   --accent-dim: #c49a3a;
   --accent-bright: #ffce5f;
+  --accent-text: #E3B448;
   --crimson: #B04632;
   --fg: #ffffff;
   --fg-80: rgba(255, 255, 255, 0.8);
-  --fg-60: rgba(255, 255, 255, 0.6);
-  --fg-50: rgba(255, 255, 255, 0.5);
-  --fg-40: rgba(255, 255, 255, 0.4);
-  --fg-30: rgba(255, 255, 255, 0.3);
-  --fg-25: rgba(255, 255, 255, 0.25);
+  --fg-70: rgba(255, 255, 255, 0.76);
+  --fg-60: rgba(255, 255, 255, 0.7);
+  --fg-50: rgba(255, 255, 255, 0.64);
+  --fg-40: rgba(255, 255, 255, 0.6);
+  --fg-30: rgba(255, 255, 255, 0.57);
+  --fg-25: rgba(255, 255, 255, 0.55);
   --fg-20: rgba(255, 255, 255, 0.2);
+  --fg-15: rgba(255, 255, 255, 0.15);
   --fg-10: rgba(255, 255, 255, 0.1);
   --fg-08: rgba(255, 255, 255, 0.08);
   --fg-06: rgba(255, 255, 255, 0.06);
@@ -106,15 +116,18 @@
   --accent-primary: #E3B448;
   --accent-dim: #c49a3a;
   --accent-bright: #ffce5f;
+  --accent-text: #E3B448;
   --crimson: #B04632;
   --fg: #ffffff;
   --fg-80: rgba(255, 255, 255, 0.8);
-  --fg-60: rgba(255, 255, 255, 0.6);
-  --fg-50: rgba(255, 255, 255, 0.5);
-  --fg-40: rgba(255, 255, 255, 0.4);
-  --fg-30: rgba(255, 255, 255, 0.3);
-  --fg-25: rgba(255, 255, 255, 0.25);
+  --fg-70: rgba(255, 255, 255, 0.74);
+  --fg-60: rgba(255, 255, 255, 0.66);
+  --fg-50: rgba(255, 255, 255, 0.58);
+  --fg-40: rgba(255, 255, 255, 0.54);
+  --fg-30: rgba(255, 255, 255, 0.5);
+  --fg-25: rgba(255, 255, 255, 0.47);
   --fg-20: rgba(255, 255, 255, 0.2);
+  --fg-15: rgba(255, 255, 255, 0.15);
   --fg-10: rgba(255, 255, 255, 0.1);
   --fg-08: rgba(255, 255, 255, 0.08);
   --fg-06: rgba(255, 255, 255, 0.06);
@@ -140,6 +153,7 @@
   --color-navy: var(--nav-active);
   --color-navy-light: var(--nav-bg);
   --color-gold: var(--accent-primary);
+  --color-gold-text: var(--accent-text);
   --color-gold-dim: var(--accent-dim);
   --color-gold-bright: var(--accent-bright);
   --color-crimson: var(--crimson);
@@ -152,12 +166,14 @@
   --color-surface-text: var(--surface-text);
   --color-fg: var(--fg);
   --color-fg-80: var(--fg-80);
+  --color-fg-70: var(--fg-70);
   --color-fg-60: var(--fg-60);
   --color-fg-50: var(--fg-50);
   --color-fg-40: var(--fg-40);
   --color-fg-30: var(--fg-30);
   --color-fg-25: var(--fg-25);
   --color-fg-20: var(--fg-20);
+  --color-fg-15: var(--fg-15);
   --color-fg-10: var(--fg-10);
   --color-fg-08: var(--fg-08);
   --color-fg-06: var(--fg-06);
@@ -175,6 +191,7 @@
   --color-navy: var(--nav-active);
   --color-navy-light: var(--nav-bg);
   --color-gold: var(--accent-primary);
+  --color-gold-text: var(--accent-text);
   --color-gold-dim: var(--accent-dim);
   --color-gold-bright: var(--accent-bright);
   --color-crimson: var(--crimson);
@@ -187,12 +204,14 @@
   --color-surface-text: var(--surface-text);
   --color-fg: var(--fg);
   --color-fg-80: var(--fg-80);
+  --color-fg-70: var(--fg-70);
   --color-fg-60: var(--fg-60);
   --color-fg-50: var(--fg-50);
   --color-fg-40: var(--fg-40);
   --color-fg-30: var(--fg-30);
   --color-fg-25: var(--fg-25);
   --color-fg-20: var(--fg-20);
+  --color-fg-15: var(--fg-15);
   --color-fg-10: var(--fg-10);
   --color-fg-08: var(--fg-08);
   --color-fg-06: var(--fg-06);

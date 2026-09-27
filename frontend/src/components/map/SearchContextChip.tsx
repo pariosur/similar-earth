@@ -15,7 +15,7 @@ export function SearchContextChip() {
       <span className="text-[10px] font-bold uppercase tracking-wider shrink-0" style={{ color: 'var(--fg-40)' }}>
         {explored ? 'Heatmap for' : 'Places like'}
       </span>
-      <span className="text-[11px] font-bold truncate" style={{ color: 'var(--accent-primary)' }}>
+      <span className="text-[11px] font-bold truncate" style={{ color: 'var(--accent-text)' }}>
         {explored ? `#${explored.index + 1} ${explored.name}` : referenceName || 'your search'}
       </span>
       <span className="text-[10px] shrink-0" style={{ color: 'var(--fg-25)' }}>&middot;</span>

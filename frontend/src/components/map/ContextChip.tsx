@@ -36,7 +36,7 @@ export function ContextChip() {
       <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: 'var(--fg-40)' }}>
         {queryStatus === 'computing' ? 'Scanning for' : 'Showing similarity for'}
       </span>
-      <span className="text-[11px] font-bold" style={{ color: 'var(--accent-primary)' }}>
+      <span className="text-[11px] font-bold" style={{ color: 'var(--accent-text)' }}>
         {activeMapName || 'Custom query'}
       </span>
       <span className="text-[10px]" style={{ color: 'var(--fg-25)' }}>&middot;</span>
