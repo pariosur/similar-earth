@@ -503,6 +503,13 @@ func geocodeReference(query string) (*searchReference, error) {
 		return nil, errGeocoderUnavailable
 	}
 	if len(data.Results) == 0 {
+		// GeoNames misses "the Sundarbans" but finds "Sundarbans".
+		if trimmed, ok := strings.CutPrefix(strings.TrimSpace(query), "the "); ok && trimmed != "" {
+			return geocodeReference(trimmed)
+		}
+		if trimmed, ok := strings.CutPrefix(strings.TrimSpace(query), "The "); ok && trimmed != "" {
+			return geocodeReference(trimmed)
+		}
 		return nil, fmt.Errorf("place not found")
 	}
 	selected, err := chooseGeonamesResult(query, data.Results)
