@@ -132,6 +132,13 @@ export interface NaturalSearchMatch {
   name: string
   score: number
   temperature_difference_c?: number
+  // For theme searches: the reference site this match is closest to
+  similar_to?: string
+}
+
+export interface NaturalSearchTheme {
+  id: string
+  name: string
 }
 
 export interface NaturalSearchReference {
@@ -142,7 +149,11 @@ export interface NaturalSearchReference {
 
 export interface NaturalSearchResponse {
   matches?: NaturalSearchMatch[]
+  // A named place search has one reference; a theme search ("mangroves") uses
+  // the curated sites of a gallery map, all listed in references.
   reference?: NaturalSearchReference
+  theme?: NaturalSearchTheme
+  references?: NaturalSearchReference[]
   clarification?: string
   context?: NaturalSearchContext
   unsupported?: string[]

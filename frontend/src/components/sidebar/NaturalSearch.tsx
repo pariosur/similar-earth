@@ -29,13 +29,15 @@ export function NaturalSearch({
   const search = async (text = state.prompt) => {
     if (!text.trim() || state.loading) return
     const context = state.context
-    update({ prompt: text, loading: true, error: '', matches: [], reference: null, clarification: '', explanation: '', explored: null, hovered: null, selected: null })
+    update({ prompt: text, loading: true, error: '', matches: [], reference: null, theme: null, references: [], clarification: '', explanation: '', explored: null, hovered: null, selected: null })
     try {
       const result = await searchPlaces(text, context)
       const matches = result.matches || []
       update({
         matches,
         reference: result.reference || null,
+        theme: result.theme || null,
+        references: result.references || (result.reference ? [result.reference] : []),
         clarification: result.clarification || result.unsupported?.join(' ') || '',
         explanation: result.explanation || '',
         context: result.context,
@@ -100,7 +102,7 @@ export function NaturalSearch({
           className="w-full resize-y bg-fg-05 border border-fg-10 p-3 text-sm text-fg placeholder-fg-40 outline-none focus:border-gold/50"
         />
         <div className="flex items-center justify-between">
-          <span className="text-[10px] text-fg-40">5–10 matches · 2 km similarity</span>
+          <span className="text-[10px] text-fg-40">Up to 20 matches · 2 km similarity</span>
           <button disabled={state.loading || !state.prompt.trim()} className="bg-gold px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-dark-900 disabled:opacity-50">
             {state.loading ? 'Searching…' : 'Find places'}
           </button>
@@ -123,6 +125,14 @@ export function NaturalSearch({
           <button onClick={state.reset} className="text-[10px] text-fg-40 hover:text-fg">Clear</button>
         </div>
         {state.explanation && <p className="text-xs text-fg-50">{state.explanation}</p>}
+        {state.theme && (
+          <div className="flex w-full items-center gap-2 border border-gold/20 bg-gold/5 px-3 py-2 text-xs text-fg-70">
+            <span className="material-symbols-outlined text-sm text-gold">star</span>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-fg-40">Theme</span>
+            <span className="truncate font-semibold text-fg">{state.theme.name}</span>
+            <span className="ml-auto shrink-0 text-[10px] text-fg-50">{state.references.length} reference sites</span>
+          </div>
+        )}
         {state.reference && (
           <button
             onClick={() => onFlyTo?.(state.reference!.lat, state.reference!.lng)}
@@ -151,6 +161,7 @@ export function NaturalSearch({
                 </h3>
                 <span className="shrink-0 text-xs text-gold">{Math.round(match.score * 100)}%</span>
               </div>
+              {match.similar_to && <p className="mt-1 pl-7 text-[11px] text-fg-50">Closest to {match.similar_to}</p>}
               {match.temperature_difference_c != null && <p className="mt-1 pl-7 text-[11px] text-fg-50">{match.temperature_difference_c > 0 ? '+' : ''}{match.temperature_difference_c.toFixed(1)}°C vs reference</p>}
               <div className="mt-3 flex gap-2 pl-7">
                 <button onClick={() => viewOnMap(match, i)} className="border border-fg-15 px-2 py-1.5 text-[10px] text-fg-70 hover:text-gold">View on map</button>

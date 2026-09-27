@@ -23,6 +23,7 @@ import (
 
 type searchContext struct {
 	Reference   *searchReference   `json:"reference,omitempty"`
+	Theme       string             `json:"theme,omitempty"` // gallery map ID; used instead of a reference place
 	Countries   searchRegions      `json:"countries,omitempty"`
 	Continents  searchRegions      `json:"continents,omitempty"`
 	Temperature *searchTemperature `json:"temperature,omitempty"`
@@ -52,6 +53,7 @@ type naturalSearchRequest struct {
 
 type parsedSearch struct {
 	ReferencePlace string            `json:"reference_place"`
+	Theme          string            `json:"theme"`
 	Countries      searchRegions     `json:"countries"`
 	Continents     searchRegions     `json:"continents"`
 	Temperature    searchTemperature `json:"temperature"`
@@ -61,6 +63,7 @@ type parsedSearch struct {
 
 // Search results are spread out so one region doesn't take all ten slots.
 const (
+	searchResultCount        = 20
 	searchResultSpacingKm    = 300
 	searchReferenceExcludeKm = 100
 	searchMaxPerCountry      = 3
@@ -83,6 +86,7 @@ type geonamesResponse struct {
 }
 
 var (
+	placeNameCache   sync.Map // "lat,lng" rounded to 0.01° -> GeoNames place label
 	searchDailyCount atomic.Int64
 	searchDailyDate  atomic.Int64
 )
@@ -113,6 +117,7 @@ func (s *Server) handleNaturalSearch(c *fiber.Ctx) error {
 	default:
 		return c.Status(fiber.StatusTooManyRequests).JSON(fiber.Map{"error": "a search is already running; try again shortly"})
 	}
+	themes := s.searchThemes()
 	var req naturalSearchRequest
 	if err := c.BodyParser(&req); err != nil || strings.TrimSpace(req.Prompt) == "" || len(req.Prompt) > 500 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "prompt must be between 1 and 500 characters"})
@@ -120,6 +125,9 @@ func (s *Server) handleNaturalSearch(c *fiber.Ctx) error {
 	if req.Context != nil {
 		if err := validateSearchState(req.Context); err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+		}
+		if req.Context.Theme != "" && findTheme(themes, req.Context.Theme) == nil {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid search theme"})
 		}
 		for _, country := range append(append([]string{}, req.Context.Countries.Include...), req.Context.Countries.Exclude...) {
 			if !s.searchData.HasCountry(country) {
@@ -131,14 +139,14 @@ func (s *Server) handleNaturalSearch(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusTooManyRequests).JSON(fiber.Map{"error": "daily search limit reached"})
 	}
 	ctx := c.Context()
-	parsed, err := parseSearchPrompt(ctx, req.Prompt, req.Context)
+	parsed, err := parseSearchPrompt(ctx, req.Prompt, req.Context, themes)
 	if err != nil {
 		return c.Status(fiber.StatusBadGateway).JSON(fiber.Map{"error": "could not interpret search; try rephrasing"})
 	}
 	if question, ask := clarificationFor(parsed, req.Context); ask {
 		return c.JSON(fiber.Map{"clarification": question, "unsupported": parsed.Unsupported, "context": req.Context})
 	}
-	state, err := mergeSearchContext(req.Context, parsed)
+	state, err := mergeSearchContext(req.Context, parsed, themes)
 	if err != nil {
 		var ambiguous *ambiguousPlaceError
 		if errors.As(err, &ambiguous) {
@@ -146,8 +154,8 @@ func (s *Server) handleNaturalSearch(c *fiber.Ctx) error {
 		}
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
-	if state.Reference == nil {
-		return c.JSON(fiber.Map{"clarification": "Which place should I use as the reference?", "context": state})
+	if state.Reference == nil && state.Theme == "" {
+		return c.JSON(fiber.Map{"clarification": "Which place should the results look like?", "context": state})
 	}
 	if err := validateSearchState(state); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
@@ -160,19 +168,43 @@ func (s *Server) handleNaturalSearch(c *fiber.Ctx) error {
 
 	includeCountries := s.searchData.CountryIDs(state.Countries.Include)
 	excludeCountries := s.searchData.CountryIDs(state.Countries.Exclude)
-	// Geocoded points often land in a gap of the land mask; use the nearest land pixel.
-	refRow, refCol, ok := s.grid.NearestLand(state.Reference.Lat, state.Reference.Lng, similarity.PinSnapRadius)
-	if !ok {
+	// The reference is a named place or a theme's curated sites. Points often land
+	// in a gap of the land mask, so each snaps to the nearest land pixel.
+	theme := findTheme(themes, state.Theme)
+	var pins []similarity.Pin
+	var refTemps []float64
+	addPin := func(lat, lng float64, label string) bool {
+		row, col, ok := s.grid.NearestLand(lat, lng, similarity.PinSnapRadius)
+		if !ok {
+			return false
+		}
+		lat, lng = s.grid.CellCenter(row, col)
+		pins = append(pins, similarity.Pin{Lat: lat, Lng: lng, Label: label})
+		if _, temp, ok := s.searchData.At(row*int(s.grid.Width) + col); ok {
+			refTemps = append(refTemps, temp)
+		}
+		return true
+	}
+	if theme != nil {
+		for _, pin := range theme.Pins {
+			addPin(pin.Lat, pin.Lng, pin.Label)
+		}
+	} else if addPin(state.Reference.Lat, state.Reference.Lng, state.Reference.Name) {
+		state.Reference.Lat, state.Reference.Lng = pins[0].Lat, pins[0].Lng
+	}
+	if len(pins) == 0 {
 		return c.JSON(fiber.Map{"clarification": "I have no satellite data near that place. Try a nearby place.", "context": state})
 	}
-	state.Reference.Lat, state.Reference.Lng = s.grid.CellCenter(refRow, refCol)
-	pins := []similarity.Pin{{Lat: state.Reference.Lat, Lng: state.Reference.Lng, Label: state.Reference.Name}}
-	_, refTemp, refOK := s.searchData.At(refRow*int(s.grid.Width) + refCol)
+	// Warmer/colder compares against the reference, or the mean of a theme's sites.
+	refTemp, refOK := 0.0, len(refTemps) > 0
+	for _, temp := range refTemps {
+		refTemp += temp / float64(len(refTemps))
+	}
 	if state.Temperature.Comparison != "" && !refOK {
 		return c.JSON(fiber.Map{"clarification": "I don't have annual temperature data for that reference. Try another place.", "context": state})
 	}
 
-	matches, err := s.engine.FindFilteredTopMatches(pins, 10, func(index int, _, _ float64) bool {
+	matches, err := s.engine.FindFilteredTopMatches(pins, searchResultCount, func(index int, _, _ float64) bool {
 		country, temperature, ok := s.searchData.At(index)
 		if !ok {
 			return false
@@ -220,33 +252,56 @@ func (s *Server) handleNaturalSearch(c *fiber.Ctx) error {
 		row, col, _ := s.grid.LatLngToRowCol(match.Lat, match.Lng)
 		_, temperature, _ := s.searchData.At(row*int(s.grid.Width) + col)
 		item := fiber.Map{"lat": match.Lat, "lng": match.Lng, "name": names[i], "score": match.Score}
+		if theme != nil && match.BestPinIndex < len(pins) {
+			item["similar_to"] = pins[match.BestPinIndex].Label
+		}
 		if refOK && (state.Temperature.Comparison != "" || state.Temperature.MinC != nil || state.Temperature.MaxC != nil) {
 			item["temperature_difference_c"] = math.Round((temperature-refTemp)*10) / 10
 		}
 		out = append(out, item)
 	}
 	// The context never carries coordinates (clients can't inject them), so the
-	// geocoded reference is returned separately for drawing it on the map.
-	reference := fiber.Map{"name": state.Reference.Name, "lat": state.Reference.Lat, "lng": state.Reference.Lng}
-	return c.JSON(fiber.Map{"matches": out, "reference": reference, "context": state, "explanation": explainSearch(state, parsed.Unsupported)})
+	// reference points are returned separately for drawing them on the map.
+	references := make([]fiber.Map, len(pins))
+	for i, pin := range pins {
+		references[i] = fiber.Map{"name": pin.Label, "lat": pin.Lat, "lng": pin.Lng}
+	}
+	response := fiber.Map{"matches": out, "references": references, "context": state}
+	refLabel := ""
+	if theme != nil {
+		response["theme"] = fiber.Map{"id": theme.ID, "name": theme.Name}
+		refLabel = "the " + theme.Name + " reference sites"
+	} else {
+		response["reference"] = references[0]
+		refLabel = state.Reference.Name
+	}
+	response["explanation"] = explainSearch(state, refLabel, parsed.Unsupported)
+	return c.JSON(response)
 }
 
-func parseSearchPrompt(ctx context.Context, prompt string, state *searchContext) (parsedSearch, error) {
+func parseSearchPrompt(ctx context.Context, prompt string, state *searchContext, themes []searchTheme) (parsedSearch, error) {
 	key := os.Getenv("OPENAI_API_KEY")
 	if key == "" {
 		return parsedSearch{}, fmt.Errorf("OPENAI_API_KEY is not configured")
 	}
 	input, _ := json.Marshal(fiber.Map{"prompt": prompt, "current_state": state})
+	themeIDs := []string{""}
+	themeList := make([]string, 0, len(themes))
+	for _, theme := range themes {
+		themeIDs = append(themeIDs, theme.ID)
+		themeList = append(themeList, theme.ID+" ("+theme.Name+")")
+	}
 	body := fiber.Map{
 		"model": "gpt-6-luna", "max_completion_tokens": 300,
 		"messages": []fiber.Map{
-			{"role": "system", "content": "You turn a place-search prompt into filters for a satellite-similarity search. Every search ranks places by how closely their Google AlphaEarth satellite embeddings match one reference place, so \"like\", \"similar to\", \"resembling\" or \"looks like\" X always means X is reference_place: never ask what similarity means and never list it as unsupported. Fields: reference_place (the place as the user names it, e.g. \"Atacama Desert\"); included/excluded country names or continents; annual mean temperature bounds in Celsius; warmer/colder than the reference. current_state holds earlier turns: keep its values unless the prompt changes them, and leave reference_place empty to keep its reference. Put other constraints you cannot express with these fields (rainfall, soil, population, ...) in unsupported. Use clarification only when neither the prompt nor current_state names a reference place. Never return coordinates, scores, or explanations. Do not invent values. Return strict JSON matching the schema."},
+			{"role": "system", "content": "You turn a place-search prompt into filters for a satellite-similarity search. Every search ranks places by how closely their Google AlphaEarth satellite embeddings match a reference, so \"like\", \"similar to\", \"resembling\" or \"looks like\" X always means X is the reference: never ask what similarity means and never list it as unsupported. The reference is either reference_place, a specific named place as the user names it (\"Atacama Desert\", \"the Sundarbans\"), or theme, when the prompt asks for a kind of place instead: an ecosystem, landform, crop or land use such as \"mangroves\", \"glacier country\", \"rice-growing land\" or \"coffee country\". Set theme to the closest id from this list and leave reference_place empty; if no theme fits, put the request in unsupported. Themes: " + strings.Join(themeList, ", ") + ". Other fields: included/excluded country names or continents; annual mean temperature bounds in Celsius; warmer/colder than the reference. current_state holds earlier turns: keep its values unless the prompt changes them, and leave reference_place and theme empty to keep its reference or theme. Put other constraints you cannot express with these fields (rainfall, soil, population, ...) in unsupported. Use clarification only when neither the prompt nor current_state gives a reference place or theme. Never return coordinates, scores, or explanations. Do not invent values. Return strict JSON matching the schema."},
 			{"role": "user", "content": string(input)},
 		},
 		"response_format": fiber.Map{"type": "json_schema", "json_schema": fiber.Map{
 			"name": "search_filters", "strict": true,
-			"schema": fiber.Map{"type": "object", "additionalProperties": false, "required": []string{"reference_place", "countries", "continents", "temperature", "clarification", "unsupported"}, "properties": fiber.Map{
+			"schema": fiber.Map{"type": "object", "additionalProperties": false, "required": []string{"reference_place", "theme", "countries", "continents", "temperature", "clarification", "unsupported"}, "properties": fiber.Map{
 				"reference_place": fiber.Map{"type": "string"},
+				"theme":           fiber.Map{"type": "string", "enum": themeIDs},
 				"countries":       regionSchema(), "continents": regionSchema(),
 				"temperature": fiber.Map{"type": "object", "additionalProperties": false, "required": []string{"comparison", "min_c", "max_c"}, "properties": fiber.Map{
 					"comparison": fiber.Map{"type": "string", "enum": []string{"", "warmer", "colder"}},
@@ -308,21 +363,29 @@ func regionSchema() fiber.Map {
 	}}
 }
 
-func mergeSearchContext(current *searchContext, parsed parsedSearch) (*searchContext, error) {
+func mergeSearchContext(current *searchContext, parsed parsedSearch, themes []searchTheme) (*searchContext, error) {
 	state := &searchContext{}
 	if current != nil {
 		*state = *current
 	}
-	placeName := parsed.ReferencePlace
-	if placeName == "" && state.Reference != nil {
-		placeName = state.Reference.Name
-	}
-	if placeName != "" {
-		place, err := geocodeReference(placeName)
+	// A new theme or place replaces the other; otherwise the current reference
+	// is geocoded again, since coordinates never round-trip through the client.
+	switch {
+	case parsed.Theme != "":
+		if findTheme(themes, parsed.Theme) == nil {
+			return nil, fmt.Errorf("unknown search theme")
+		}
+		state.Theme, state.Reference = parsed.Theme, nil
+	case parsed.ReferencePlace != "" || state.Reference != nil:
+		name := parsed.ReferencePlace
+		if name == "" {
+			name = state.Reference.Name
+		}
+		place, err := geocodeReference(name)
 		if err != nil {
 			return nil, err
 		}
-		state.Reference = place
+		state.Reference, state.Theme = place, ""
 	}
 	state.Countries = mergeRegions(state.Countries, parsed.Countries)
 	state.Continents = mergeRegions(state.Continents, parsed.Continents)
@@ -511,16 +574,22 @@ func (s *Server) reverseGeocodeMatches(ctx context.Context, matches []similarity
 	if username == "" {
 		return names
 	}
-	ctx, cancel := context.WithTimeout(ctx, 1200*time.Millisecond)
+	ctx, cancel := context.WithTimeout(ctx, 2500*time.Millisecond)
 	defer cancel()
 	var wg sync.WaitGroup
-	sem := make(chan struct{}, 5)
-	client := &http.Client{Timeout: 1200 * time.Millisecond}
+	sem := make(chan struct{}, 10)
+	client := &http.Client{Timeout: 1500 * time.Millisecond}
 	for i, match := range matches {
 		row, col, ok := s.grid.LatLngToRowCol(match.Lat, match.Lng)
 		if ok {
 			country, _, _ := s.searchData.At(row*int(s.grid.Width) + col)
 			names[i] = fmt.Sprintf("%.2f°, %.2f°, %s", match.Lat, match.Lng, country.Name)
+		}
+		// Results repeat across searches; cached names save GeoNames credits (1,000/hour).
+		cacheKey := fmt.Sprintf("%.2f,%.2f", match.Lat, match.Lng)
+		if name, ok := placeNameCache.Load(cacheKey); ok {
+			names[i] = name.(string)
+			continue
 		}
 		wg.Add(1)
 		go func(i int, match similarity.TopMatch) {
@@ -547,6 +616,7 @@ func (s *Server) reverseGeocodeMatches(ctx context.Context, matches []similarity
 			var result geonamesResponse
 			if json.NewDecoder(io.LimitReader(resp.Body, 16*1024)).Decode(&result) == nil && len(result.Results) > 0 {
 				names[i] = geonamesLabel(result.Results[0])
+				placeNameCache.Store(cacheKey, names[i])
 			}
 		}(i, match)
 	}
@@ -554,7 +624,7 @@ func (s *Server) reverseGeocodeMatches(ctx context.Context, matches []similarity
 	return names
 }
 
-func explainSearch(state *searchContext, ignored []string) string {
+func explainSearch(state *searchContext, refLabel string, ignored []string) string {
 	parts := []string{"Ranked by satellite similarity"}
 	if len(state.Countries.Include) > 0 {
 		parts = append(parts, "included countries: "+strings.Join(state.Countries.Include, ", "))
@@ -570,7 +640,7 @@ func explainSearch(state *searchContext, ignored []string) string {
 	}
 	if state.Temperature != nil {
 		if state.Temperature.Comparison != "" {
-			parts = append(parts, state.Temperature.Comparison+" than "+state.Reference.Name+" annual mean")
+			parts = append(parts, state.Temperature.Comparison+" than "+refLabel+" annual mean")
 		}
 		if state.Temperature.MinC != nil {
 			parts = append(parts, fmt.Sprintf("annual mean at least %.1f°C", *state.Temperature.MinC))
@@ -586,12 +656,12 @@ func explainSearch(state *searchContext, ignored []string) string {
 }
 
 // clarificationFor decides whether to ask instead of searching. Similarity always
-// means AlphaEarth embedding similarity, so once there is a reference place the
-// search runs; anything the model couldn't map to a filter is listed in the
+// means AlphaEarth embedding similarity, so once there is a reference place or
+// theme the search runs; anything the model couldn't map to a filter is listed in the
 // explanation rather than blocking. Ambiguous place names are caught later by
 // the geocoder.
 func clarificationFor(parsed parsedSearch, current *searchContext) (string, bool) {
-	if parsed.ReferencePlace != "" || current != nil && current.Reference != nil {
+	if parsed.ReferencePlace != "" || parsed.Theme != "" || current != nil && (current.Reference != nil || current.Theme != "") {
 		return "", false
 	}
 	if parsed.Clarification != "" {

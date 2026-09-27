@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { NaturalSearchContext, NaturalSearchMatch, NaturalSearchReference } from '../api/client'
+import type { NaturalSearchContext, NaturalSearchMatch, NaturalSearchReference, NaturalSearchTheme } from '../api/client'
 
 // Which experience the map is showing. "search" hides the gallery heatmap and
 // shows the Find places results; "gallery" is the Maps / Create experience.
@@ -17,6 +17,9 @@ interface SearchState {
   prompt: string
   matches: NaturalSearchMatch[]
   reference: NaturalSearchReference | null
+  // Theme searches ("mangroves") have a theme and several reference sites
+  theme: NaturalSearchTheme | null
+  references: NaturalSearchReference[]
   context?: NaturalSearchContext
   clarification: string
   explanation: string
@@ -45,6 +48,8 @@ function initialMapMode(): MapMode {
 const emptyResults = {
   matches: [],
   reference: null,
+  theme: null,
+  references: [],
   context: undefined,
   clarification: '',
   explanation: '',

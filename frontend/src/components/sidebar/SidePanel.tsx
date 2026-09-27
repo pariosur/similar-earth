@@ -291,7 +291,7 @@ function MobileCollapsedHeader({ onExpand, onFlyTo }: { onExpand: () => void; on
 
 function MobileSearchHeader({ onExpand, onFlyTo }: { onExpand: () => void; onFlyTo?: (lat: number, lng: number) => void }) {
   const matches = useSearchStore((s) => s.matches)
-  const referenceName = useSearchStore((s) => s.reference?.name || s.context?.reference?.name)
+  const referenceName = useSearchStore((s) => s.theme?.name || s.reference?.name || s.context?.reference?.name)
   const selected = useSearchStore((s) => s.selected)
   const update = useSearchStore((s) => s.update)
 

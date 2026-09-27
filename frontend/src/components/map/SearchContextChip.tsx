@@ -4,6 +4,7 @@ import { useSearchStore } from '../../stores/searchStore'
 export function SearchContextChip() {
   const matches = useSearchStore((s) => s.matches)
   const referenceName = useSearchStore((s) => s.reference?.name || s.context?.reference?.name)
+  const themeName = useSearchStore((s) => s.theme?.name)
   const explored = useSearchStore((s) => s.explored)
   const exploring = useSearchStore((s) => s.exploring)
   const update = useSearchStore((s) => s.update)
@@ -13,10 +14,10 @@ export function SearchContextChip() {
   return (
     <div className={`absolute top-[var(--context-chip-top)] left-1/2 -translate-x-1/2 w-max z-[var(--z-chip)] glass-panel flex items-center gap-1.5 pl-3.5 ${explored ? 'pr-1.5' : 'pr-3.5'} py-1 max-w-[calc(100%-2rem)] ${exploring !== null ? 'animate-pulse-slow' : ''}`}>
       <span className="text-[10px] font-bold uppercase tracking-wider shrink-0" style={{ color: 'var(--fg-40)' }}>
-        {explored ? 'Heatmap for' : 'Places like'}
+        {explored ? 'Heatmap for' : themeName ? 'Theme' : 'Places like'}
       </span>
       <span className="text-[11px] font-bold truncate" style={{ color: 'var(--accent-text)' }}>
-        {explored ? `#${explored.index + 1} ${explored.name}` : referenceName || 'your search'}
+        {explored ? `#${explored.index + 1} ${explored.name}` : themeName || referenceName || 'your search'}
       </span>
       <span className="text-[10px] shrink-0" style={{ color: 'var(--fg-25)' }}>&middot;</span>
       <span className="text-[10px] font-bold uppercase tracking-wider shrink-0" style={{ color: 'var(--fg-40)' }}>

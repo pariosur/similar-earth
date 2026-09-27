@@ -8,34 +8,36 @@ interface SearchMarkersProps {
 }
 
 /**
- * Find places results on the map: the reference place (gold square) and the
- * numbered matches (crimson), kept in sync with the result cards via hover.
+ * Find places results on the map: the reference place or a theme's sites (gold
+ * squares) and the numbered matches (crimson), kept in sync with the result cards via hover.
  */
 export function SearchMarkers({ map }: SearchMarkersProps) {
   const matches = useSearchStore((s) => s.matches)
-  const reference = useSearchStore((s) => s.reference)
+  const references = useSearchStore((s) => s.references)
+  const theme = useSearchStore((s) => s.theme)
   const hovered = useSearchStore((s) => s.hovered)
   const selected = useSearchStore((s) => s.selected)
   const explored = useSearchStore((s) => s.explored)
   const isMobile = useIsMobile()
   const markersRef = useRef<{ marker: maplibregl.Marker; el: HTMLDivElement }[]>([])
 
-  // Reference marker
+  // Reference markers: the named place, or every curated site of a theme
   useEffect(() => {
-    if (!reference) return
-    const el = document.createElement('div')
-    el.className = 'pin-marker search-reference-marker'
-    const icon = document.createElement('span')
-    icon.className = 'material-symbols-outlined'
-    icon.textContent = 'star'
-    el.appendChild(icon)
-    const tooltip = document.createElement('div')
-    tooltip.className = 'pin-marker-tooltip'
-    tooltip.textContent = `Reference · ${reference.name}`
-    el.appendChild(tooltip)
-    const marker = new maplibregl.Marker({ element: el }).setLngLat([reference.lng, reference.lat]).addTo(map)
-    return () => { marker.remove() }
-  }, [reference, map])
+    const markers = references.map((ref) => {
+      const el = document.createElement('div')
+      el.className = `pin-marker search-reference-marker${theme ? ' theme-site' : ''}`
+      const icon = document.createElement('span')
+      icon.className = 'material-symbols-outlined'
+      icon.textContent = 'star'
+      el.appendChild(icon)
+      const tooltip = document.createElement('div')
+      tooltip.className = 'pin-marker-tooltip'
+      tooltip.textContent = theme ? `${theme.name} site · ${ref.name}` : `Reference · ${ref.name}`
+      el.appendChild(tooltip)
+      return new maplibregl.Marker({ element: el }).setLngLat([ref.lng, ref.lat]).addTo(map)
+    })
+    return () => { markers.forEach((marker) => marker.remove()) }
+  }, [references, theme, map])
 
   // Result markers
   useEffect(() => {

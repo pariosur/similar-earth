@@ -114,11 +114,11 @@ func TestClarificationOnlyWithoutReferencePlace(t *testing.T) {
 
 func TestExplainSearchListsIgnoredConstraints(t *testing.T) {
 	state := &searchContext{Reference: &searchReference{Name: "Tuscany"}}
-	got := explainSearch(state, []string{"good wine", "low rainfall"})
+	got := explainSearch(state, "Tuscany", []string{"good wine", "low rainfall"})
 	if !strings.Contains(got, "not applied: good wine, low rainfall") {
 		t.Fatalf("explanation %q does not list ignored constraints", got)
 	}
-	if got := explainSearch(state, nil); strings.Contains(got, "not applied") {
+	if got := explainSearch(state, "Tuscany", nil); strings.Contains(got, "not applied") {
 		t.Fatalf("explanation %q mentions ignored constraints when there are none", got)
 	}
 }
@@ -160,5 +160,48 @@ func TestChooseGeonamesResultPrefersExactName(t *testing.T) {
 	}
 	if result, err := chooseGeonamesResult("Alentejo", results); err != nil || result.Name != "Alentejo" {
 		t.Fatalf("got %v, %v; want the Alentejo region", result, err)
+	}
+}
+
+func TestSearchThemesUseGalleryMapsWithEnoughPins(t *testing.T) {
+	pins := func(n int) []ReferencePin { return make([]ReferencePin, n) }
+	s := &Server{layerMeta: map[string]LayerMeta{
+		"mangroves": {Name: "Mangroves", Pins: pins(10)},
+		"tea":       {Name: "Tea", Pins: pins(2)},
+		"coffee":    {Name: "Specialty Coffee", Pins: pins(24)},
+	}}
+	themes := s.searchThemes()
+	if len(themes) != 2 || themes[0].ID != "coffee" || themes[1].ID != "mangroves" {
+		t.Fatalf("got themes %+v, want coffee and mangroves only", themes)
+	}
+	if findTheme(themes, "tea") != nil {
+		t.Fatal("a map with 2 pins should not be a theme")
+	}
+}
+
+func TestMergeSearchContextSwitchesToTheme(t *testing.T) {
+	themes := []searchTheme{{ID: "mangroves", Name: "Mangroves"}}
+	current := &searchContext{Reference: &searchReference{Name: "Tuscany"}, Continents: searchRegions{Include: []string{"Africa"}}}
+	state, err := mergeSearchContext(current, parsedSearch{Theme: "mangroves"}, themes)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if state.Theme != "mangroves" || state.Reference != nil {
+		t.Fatalf("got theme %q, reference %v; want the theme to replace the place", state.Theme, state.Reference)
+	}
+	if len(state.Continents.Include) != 1 {
+		t.Fatal("region filters from the earlier turn were dropped")
+	}
+	if _, err := mergeSearchContext(nil, parsedSearch{Theme: "unicorns"}, themes); err == nil {
+		t.Fatal("expected an unknown theme to be rejected")
+	}
+}
+
+func TestClarificationSkippedForTheme(t *testing.T) {
+	if q, ask := clarificationFor(parsedSearch{Theme: "glaciers", Clarification: "Which place?"}, nil); ask {
+		t.Fatalf("asked %q despite a theme", q)
+	}
+	if _, ask := clarificationFor(parsedSearch{}, &searchContext{Theme: "glaciers"}); ask {
+		t.Fatal("asked despite a theme in the current context")
 	}
 }

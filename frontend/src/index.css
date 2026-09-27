@@ -391,6 +391,16 @@ html, body, #root {
   font-size: 15px;
 }
 
+/* A theme's reference sites: smaller, since there are many of them */
+.search-reference-marker.theme-site {
+  width: 18px;
+  height: 18px;
+}
+
+.search-reference-marker.theme-site .material-symbols-outlined {
+  font-size: 11px;
+}
+
 .search-reference-marker:hover .pin-marker-tooltip {
   opacity: 1;
 }
