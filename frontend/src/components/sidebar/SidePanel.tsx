@@ -11,7 +11,7 @@ import { useQueryStore } from '../../stores/queryStore'
 import { useThemeStore } from '../../stores/themeStore'
 import { useIsMobile } from '../../hooks/useIsMobile'
 
-type Tab = 'browse' | 'create' | 'about'
+type Tab = 'search' | 'browse' | 'create' | 'about'
 
 interface SidePanelProps {
   open: boolean
@@ -21,8 +21,7 @@ interface SidePanelProps {
 }
 
 export function SidePanel({ open, onToggle, onFlyTo, onCollapse }: SidePanelProps) {
-  const [tab, setTab] = useState<Tab>('browse')
-  const [browseView, setBrowseView] = useState<'search' | 'gallery'>('search')
+  const [tab, setTab] = useState<Tab>('search')
   const [naturalSearch, setNaturalSearch] = useState<NaturalSearchState>({
     prompt: '', matches: [], clarification: '', explanation: '', error: '', loading: false, exploring: null,
   })
@@ -106,6 +105,20 @@ export function SidePanel({ open, onToggle, onFlyTo, onCollapse }: SidePanelProp
           <nav className={`flex ${isMobile ? 'mt-3' : 'mt-5'} border-b border-fg-08 ${isMobile ? '-mx-4 px-4' : '-mx-8 px-8'}`}>
             <button
               onClick={() => {
+                setTab('search')
+                if (isMobile) useQueryStore.getState().setCreateMode(false)
+              }}
+              className={`flex items-center gap-2 py-3 text-[11px] font-bold uppercase tracking-[0.15em] transition-all border-b-2 mr-6 ${
+                tab === 'search'
+                  ? 'text-gold border-gold'
+                  : 'text-fg-40 border-transparent hover:text-fg-60'
+              }`}
+            >
+              <span className="material-symbols-outlined text-sm">search</span>
+              Find places
+            </button>
+            <button
+              onClick={() => {
                 setTab('browse')
                 if (isMobile) useQueryStore.getState().setCreateMode(false)
               }}
@@ -146,16 +159,9 @@ export function SidePanel({ open, onToggle, onFlyTo, onCollapse }: SidePanelProp
         <>
           <div className={`flex-1 overflow-y-auto ${isMobile ? 'px-4 py-4' : 'px-8 py-6'}`}>
             {tab === 'about' && <HowItWorks onClose={() => setTab('browse')} onCreateClick={() => { setTab('create'); if (isMobile) { useQueryStore.getState().setCreateMode(true); onCollapse?.() } }} />}
-            <div className={tab === 'browse' && browseView === 'search' ? '' : 'hidden'}>
-              <NaturalSearch state={naturalSearch} setState={setNaturalSearch} onFlyTo={onFlyTo} onBack={() => setBrowseView('gallery')} />
-            </div>
-            <div className={tab === 'browse' && browseView === 'gallery' ? '' : 'hidden'}>
-              <button onClick={() => setBrowseView('search')} className="mb-4 flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-gold hover:text-gold/80">
-                <span className="material-symbols-outlined text-sm">search</span> Search places
-              </button>
-              <MapGallery />
-            </div>
-            {tab === 'create' && <CreateMap onPublished={() => { setTab('browse'); setBrowseView('gallery') }} />}
+            {tab === 'search' && <NaturalSearch state={naturalSearch} setState={setNaturalSearch} onFlyTo={onFlyTo} onBack={() => setTab('browse')} />}
+            {tab === 'browse' && <MapGallery />}
+            {tab === 'create' && <CreateMap onPublished={() => setTab('browse')} />}
           </div>
 
           {/* Point inspection */}
