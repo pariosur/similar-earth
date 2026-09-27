@@ -11,13 +11,14 @@ import { useQueryStore } from '../../stores/queryStore'
 import { useSearchStore } from '../../stores/searchStore'
 import { useThemeStore } from '../../stores/themeStore'
 import { useIsMobile } from '../../hooks/useIsMobile'
+import { HOME_VIEW } from '../../hooks/useMapInit'
 
 type Tab = 'search' | 'browse' | 'create' | 'about'
 
 interface SidePanelProps {
   open: boolean
   onToggle: () => void
-  onFlyTo?: (lat: number, lng: number) => void
+  onFlyTo?: (lat: number, lng: number, zoom?: number) => void
   onCollapse?: () => void
 }
 
@@ -35,6 +36,16 @@ export function SidePanel({ open, onToggle, onFlyTo, onCollapse }: SidePanelProp
     }
   }
   const lastTab = () => (useSearchStore.getState().mapMode === 'search' ? 'search' : 'browse')
+
+  // The title is a link home: a fresh Find places with the world view. Modified
+  // clicks (new tab, etc.) keep the browser's default.
+  const goHome = (e: React.MouseEvent) => {
+    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
+    e.preventDefault()
+    setTab('search')
+    useSearchStore.getState().reset()
+    onFlyTo?.(HOME_VIEW.lat, HOME_VIEW.lng, HOME_VIEW.zoom)
+  }
   const themePreference = useThemeStore((s) => s.preference)
   const setTheme = useThemeStore((s) => s.setTheme)
   const isMobile = useIsMobile()
@@ -72,7 +83,7 @@ export function SidePanel({ open, onToggle, onFlyTo, onCollapse }: SidePanelProp
         <div className="flex items-start justify-between">
           <div>
             <h1 className={`${isMobile ? 'text-base' : 'text-xl'} font-black uppercase tracking-[0.15em] text-fg`}>
-              Similar Earth
+              <a href="/" onClick={goHome} className="hover:text-gold transition-colors" title="Home">Similar Earth</a>
             </h1>
             <p className="text-[11px] uppercase tracking-[0.2em] text-fg-60 mt-0.5">
               Global similarity maps

@@ -80,8 +80,11 @@ function applyBasemap(map: maplibregl.Map, basemap: Basemap) {
   }
 }
 
+// Where the map opens, and where the sidebar title's "home" link returns to.
+export const HOME_VIEW = { lat: 10, lng: -75, zoom: 2.5 }
+
 interface UseMapInitOptions {
-  onFlyToReady?: (fn: (lat: number, lng: number) => void) => void
+  onFlyToReady?: (fn: (lat: number, lng: number, zoom?: number) => void) => void
 }
 
 export function useMapInit({ onFlyToReady }: UseMapInitOptions) {
@@ -112,8 +115,8 @@ export function useMapInit({ onFlyToReady }: UseMapInitOptions) {
 
   // Expose flyTo to parent
   useEffect(() => {
-    onFlyToReady?.((lat, lng) => {
-      mapRef.current?.flyTo({ center: [lng, lat], zoom: 8, duration: 2000 })
+    onFlyToReady?.((lat, lng, zoom = 8) => {
+      mapRef.current?.flyTo({ center: [lng, lat], zoom, duration: 2000 })
     })
   }, [onFlyToReady])
 
@@ -151,8 +154,8 @@ export function useMapInit({ onFlyToReady }: UseMapInitOptions) {
     const map = new maplibregl.Map({
       container: mapContainerRef.current,
       style: computeVectorStyle(resolvedTheme, initialBasemap),
-      center: [-75, 10],
-      zoom: 2.5,
+      center: [HOME_VIEW.lng, HOME_VIEW.lat],
+      zoom: HOME_VIEW.zoom,
     })
 
     map.addControl(new maplibregl.NavigationControl(), 'bottom-right')

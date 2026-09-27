@@ -31,7 +31,7 @@ export function App() {
     document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', desc)
   }, [activeMapName, isSearch])
   const [sidebarOpen, setSidebarOpen] = useState(() => window.innerWidth >= 768)
-  const flyToRef = useRef<(lat: number, lng: number) => void>(() => {})
+  const flyToRef = useRef<(lat: number, lng: number, zoom?: number) => void>(() => {})
 
   useInitializeMap()
 
@@ -49,8 +49,8 @@ export function App() {
 
   const toggleSidebar = useCallback(() => setSidebarOpen((prev) => !prev), [])
 
-  const handleFlyTo = useCallback((lat: number, lng: number) => {
-    flyToRef.current(lat, lng)
+  const handleFlyTo = useCallback((lat: number, lng: number, zoom?: number) => {
+    flyToRef.current(lat, lng, zoom)
   }, [])
 
   // Mobile create mode: "Done" → open sheet with form
