@@ -59,14 +59,23 @@ type parsedSearch struct {
 	Unsupported    []string          `json:"unsupported"`
 }
 
+// Search results are spread out so one region doesn't take all ten slots.
+const (
+	searchResultSpacingKm    = 300
+	searchReferenceExcludeKm = 100
+	searchMaxPerCountry      = 3
+)
+
 type geonamesResult struct {
-	Name        string `json:"name"`
-	Lat         string `json:"lat"`
-	Lng         string `json:"lng"`
-	CountryName string `json:"countryName"`
-	CountryCode string `json:"countryCode"`
-	AdminName1  string `json:"adminName1"`
-	FeatureCode string `json:"fcode"`
+	Name         string `json:"name"`
+	Population   int64  `json:"population"`
+	FeatureClass string `json:"fcl"`
+	Lat          string `json:"lat"`
+	Lng          string `json:"lng"`
+	CountryName  string `json:"countryName"`
+	CountryCode  string `json:"countryCode"`
+	AdminName1   string `json:"adminName1"`
+	FeatureCode  string `json:"fcode"`
 }
 
 type geonamesResponse struct {
@@ -151,14 +160,14 @@ func (s *Server) handleNaturalSearch(c *fiber.Ctx) error {
 
 	includeCountries := s.searchData.CountryIDs(state.Countries.Include)
 	excludeCountries := s.searchData.CountryIDs(state.Countries.Exclude)
-	pins := []similarity.Pin{{Lat: state.Reference.Lat, Lng: state.Reference.Lng, Label: state.Reference.Name}}
-	if _, ok := s.grid.Lookup(pins[0].Lat, pins[0].Lng); !ok {
-		return c.JSON(fiber.Map{"clarification": "That reference point has no land embedding. Try a nearby place.", "context": state})
+	// Geocoded points often land in a gap of the land mask; use the nearest land pixel.
+	refRow, refCol, ok := s.grid.NearestLand(state.Reference.Lat, state.Reference.Lng, similarity.PinSnapRadius)
+	if !ok {
+		return c.JSON(fiber.Map{"clarification": "I have no satellite data near that place. Try a nearby place.", "context": state})
 	}
-	_, refTemp, refOK := s.searchData.At(func() int {
-		row, col, _ := s.grid.LatLngToRowCol(state.Reference.Lat, state.Reference.Lng)
-		return row*int(s.grid.Width) + col
-	}())
+	state.Reference.Lat, state.Reference.Lng = s.grid.CellCenter(refRow, refCol)
+	pins := []similarity.Pin{{Lat: state.Reference.Lat, Lng: state.Reference.Lng, Label: state.Reference.Name}}
+	_, refTemp, refOK := s.searchData.At(refRow*int(s.grid.Width) + refCol)
 	if state.Temperature.Comparison != "" && !refOK {
 		return c.JSON(fiber.Map{"clarification": "I don't have annual temperature data for that reference. Try another place.", "context": state})
 	}
@@ -190,9 +199,17 @@ func (s *Server) handleNaturalSearch(c *fiber.Ctx) error {
 			return false
 		}
 		return true
+	}, &similarity.Diversity{
+		MinDistanceKm: searchResultSpacingKm,
+		ExcludeKm:     searchReferenceExcludeKm,
+		MaxPerGroup:   searchMaxPerCountry,
+		Group: func(index int) int {
+			country, _, _ := s.searchData.At(index)
+			return int(country.ID)
+		},
 	})
 	if err != nil {
-		return c.JSON(fiber.Map{"clarification": "That reference point has no land embedding. Try a nearby place.", "context": state})
+		return c.JSON(fiber.Map{"clarification": "I have no satellite data near that place. Try a nearby place.", "context": state})
 	}
 	if len(matches) < 5 {
 		return c.JSON(fiber.Map{"clarification": "Those filters leave fewer than five matches. Broaden the region or temperature filters.", "context": state})
@@ -420,10 +437,15 @@ type ambiguousPlaceError struct{ names []string }
 
 func (e *ambiguousPlaceError) Error() string { return "ambiguous place" }
 
+// chooseGeonamesResult picks the place a search refers to. GeoNames ranks
+// results by relevance, so the first one wins unless another result with the
+// same name is a comparable place: the same kind of feature and a similar
+// population (Springfield, IL vs Springfield, MO). A region such as the
+// Scottish Highlands doesn't compete with small US towns of that name.
 func chooseGeonamesResult(query string, results []geonamesResult) (*geonamesResult, error) {
 	var regions []geonamesResult
 	for _, result := range results {
-		if result.FeatureCode == "ADM1" {
+		if result.FeatureCode == "ADM1" || strings.HasPrefix(result.FeatureCode, "PCL") {
 			regions = append(regions, result)
 		}
 	}
@@ -434,26 +456,27 @@ func chooseGeonamesResult(query string, results []geonamesResult) (*geonamesResu
 		return nil, &ambiguousPlaceError{names: geonamesLabels(regions)}
 	}
 
-	var exact []geonamesResult
-	for _, result := range results {
-		if strings.EqualFold(strings.TrimSpace(result.Name), strings.TrimSpace(query)) {
-			exact = append(exact, result)
+	top := results[0]
+	rivals := []geonamesResult{top}
+	for _, result := range results[1:] {
+		if strings.EqualFold(strings.TrimSpace(result.Name), strings.TrimSpace(top.Name)) &&
+			result.FeatureClass == top.FeatureClass && comparablePopulation(result.Population, top.Population) {
+			rivals = append(rivals, result)
 		}
 	}
-	if len(exact) > 1 {
-		return nil, &ambiguousPlaceError{names: geonamesLabels(exact)}
+	if len(rivals) > 1 {
+		return nil, &ambiguousPlaceError{names: geonamesLabels(rivals)}
 	}
-	if len(exact) == 1 {
-		return &exact[0], nil
+	return &top, nil
+}
+
+// comparablePopulation reports whether two places are within 4x of each other
+// in population; places without a population count as comparable.
+func comparablePopulation(a, b int64) bool {
+	if a == 0 || b == 0 {
+		return a == b
 	}
-	countries := map[string]bool{}
-	for _, result := range results {
-		countries[result.CountryCode] = true
-	}
-	if len(countries) > 1 {
-		return nil, &ambiguousPlaceError{names: geonamesLabels(results)}
-	}
-	return &results[0], nil
+	return min(a, b)*4 >= max(a, b)
 }
 
 func geonamesLabels(results []geonamesResult) []string {

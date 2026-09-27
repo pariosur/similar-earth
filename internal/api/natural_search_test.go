@@ -122,3 +122,33 @@ func TestExplainSearchListsIgnoredConstraints(t *testing.T) {
 		t.Fatalf("explanation %q mentions ignored constraints when there are none", got)
 	}
 }
+
+func TestChooseGeonamesResultTrustsTopRankedDistinctPlace(t *testing.T) {
+	results := []geonamesResult{
+		{Name: "Scottish Highlands", CountryCode: "GB", CountryName: "United Kingdom", FeatureClass: "L", FeatureCode: "RGN"},
+		{Name: "Scottish Highlands", CountryCode: "US", CountryName: "United States", AdminName1: "Utah", FeatureClass: "P", FeatureCode: "PPL"},
+		{Name: "Scottish Highlands", CountryCode: "US", CountryName: "United States", AdminName1: "Tennessee", FeatureClass: "P", FeatureCode: "PPL"},
+	}
+	result, err := chooseGeonamesResult("Scottish Highlands", results)
+	if err != nil || result.CountryCode != "GB" {
+		t.Fatalf("got %v, %v; want the Scottish region", result, err)
+	}
+	// A city far larger than a same-named town is not ambiguous either.
+	cities := []geonamesResult{
+		{Name: "Paris", CountryCode: "FR", FeatureClass: "P", Population: 2_138_551},
+		{Name: "Paris", CountryCode: "US", AdminName1: "Texas", FeatureClass: "P", Population: 24_476},
+	}
+	if result, err := chooseGeonamesResult("Paris", cities); err != nil || result.CountryCode != "FR" {
+		t.Fatalf("got %v, %v; want Paris, France", result, err)
+	}
+}
+
+func TestChooseGeonamesResultPicksCountry(t *testing.T) {
+	results := []geonamesResult{
+		{Name: "Iceland", CountryCode: "IS", CountryName: "Iceland", FeatureClass: "A", FeatureCode: "PCLI"},
+		{Name: "Iceland", CountryCode: "US", AdminName1: "Nebraska", FeatureClass: "P", FeatureCode: "PPL"},
+	}
+	if result, err := chooseGeonamesResult("Iceland", results); err != nil || result.CountryCode != "IS" {
+		t.Fatalf("got %v, %v; want the country", result, err)
+	}
+}

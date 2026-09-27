@@ -72,6 +72,60 @@ func (g *Grid) Lookup(lat, lng float64) ([]int8, bool) {
 	return g.Data[start:end], true
 }
 
+// NearestLand returns the land pixel closest to (lat, lng) within maxRadius
+// pixels. The land mask has scattered gaps (pixels with no embedding inside
+// otherwise covered land, ~30% around Napa or central Iceland), so exact
+// lookups of geocoded points or clicks often miss by a pixel.
+func (g *Grid) NearestLand(lat, lng float64, maxRadius int) (row, col int, ok bool) {
+	r0, c0, inBounds := g.LatLngToRowCol(lat, lng)
+	if !inBounds {
+		return 0, 0, false
+	}
+	for radius := 0; radius <= maxRadius; radius++ {
+		best := -1
+		for dr := -radius; dr <= radius; dr++ {
+			for dc := -radius; dc <= radius; dc++ {
+				if max(abs(dr), abs(dc)) != radius || !g.IsLand(r0+dr, c0+dc) {
+					continue
+				}
+				if d := dr*dr + dc*dc; best < 0 || d < best {
+					best, row, col = d, r0+dr, c0+dc
+				}
+			}
+		}
+		if best >= 0 {
+			return row, col, true
+		}
+	}
+	return 0, 0, false
+}
+
+// LookupNearest is Lookup that falls back to the nearest land pixel within
+// maxRadius pixels.
+func (g *Grid) LookupNearest(lat, lng float64, maxRadius int) ([]int8, bool) {
+	row, col, ok := g.NearestLand(lat, lng, maxRadius)
+	if !ok {
+		return nil, false
+	}
+	start := (row*int(g.Width) + col) * BandsPerPixel
+	if start+BandsPerPixel > len(g.Data) {
+		return nil, false
+	}
+	return g.Data[start : start+BandsPerPixel], true
+}
+
+// CellCenter returns the coordinates of a pixel's center.
+func (g *Grid) CellCenter(row, col int) (lat, lng float64) {
+	return g.North - (float64(row)+0.5)*g.CellHeight, g.West + (float64(col)+0.5)*g.CellWidth
+}
+
+func abs(v int) int {
+	if v < 0 {
+		return -v
+	}
+	return v
+}
+
 // PixelCount returns the total number of pixels in the grid.
 func (g *Grid) PixelCount() int {
 	return int(g.Width) * int(g.Height)

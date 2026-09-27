@@ -39,7 +39,7 @@ func (e *Engine) Compute(query *Query) (*QueryResult, error) {
 	// --- resolve reference embeddings ---
 	query.RefEmbeddings = make([][]int8, len(query.Pins))
 	for i, pin := range query.Pins {
-		emb, ok := g.Lookup(pin.Lat, pin.Lng)
+		emb, ok := g.LookupNearest(pin.Lat, pin.Lng, PinSnapRadius)
 		if !ok {
 			// Pin is on water or out of bounds; leave nil.
 			continue

@@ -86,3 +86,21 @@ func TestLoadGridRejectsTruncatedFile(t *testing.T) {
 		t.Fatal("expected error for truncated grid")
 	}
 }
+
+func TestNearestLandSnapsAcrossMaskGaps(t *testing.T) {
+	g := &Grid{Width: 5, Height: 5, West: 0, East: 5, South: 0, North: 5, CellWidth: 1, CellHeight: 1, LandMask: make([]byte, 4)}
+	// Only (row 2, col 4) is land; IsLand reads bits most-significant first.
+	i := 2*5 + 4
+	g.LandMask[i/8] |= 1 << (7 - i%8)
+
+	if _, _, ok := g.NearestLand(2.5, 2.5, 1); ok {
+		t.Fatal("found land outside the search radius")
+	}
+	row, col, ok := g.NearestLand(2.5, 2.5, 2)
+	if !ok || row != 2 || col != 4 {
+		t.Fatalf("got (%d, %d, %v), want (2, 4, true)", row, col, ok)
+	}
+	if lat, lng := g.CellCenter(row, col); lat != 2.5 || lng != 4.5 {
+		t.Fatalf("cell center = (%v, %v), want (2.5, 4.5)", lat, lng)
+	}
+}
