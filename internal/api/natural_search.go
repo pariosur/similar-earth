@@ -126,8 +126,8 @@ func (s *Server) handleNaturalSearch(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusBadGateway).JSON(fiber.Map{"error": "could not interpret search; try rephrasing"})
 	}
-	if parsed.Clarification != "" || len(parsed.Unsupported) > 0 {
-		return c.JSON(fiber.Map{"clarification": parsed.Clarification, "unsupported": parsed.Unsupported, "context": req.Context})
+	if question, ask := clarificationFor(parsed, req.Context); ask {
+		return c.JSON(fiber.Map{"clarification": question, "unsupported": parsed.Unsupported, "context": req.Context})
 	}
 	state, err := mergeSearchContext(req.Context, parsed)
 	if err != nil {
@@ -211,7 +211,7 @@ func (s *Server) handleNaturalSearch(c *fiber.Ctx) error {
 	// The context never carries coordinates (clients can't inject them), so the
 	// geocoded reference is returned separately for drawing it on the map.
 	reference := fiber.Map{"name": state.Reference.Name, "lat": state.Reference.Lat, "lng": state.Reference.Lng}
-	return c.JSON(fiber.Map{"matches": out, "reference": reference, "context": state, "explanation": explainSearch(state)})
+	return c.JSON(fiber.Map{"matches": out, "reference": reference, "context": state, "explanation": explainSearch(state, parsed.Unsupported)})
 }
 
 func parseSearchPrompt(ctx context.Context, prompt string, state *searchContext) (parsedSearch, error) {
@@ -223,7 +223,7 @@ func parseSearchPrompt(ctx context.Context, prompt string, state *searchContext)
 	body := fiber.Map{
 		"model": "gpt-6-luna", "max_completion_tokens": 300,
 		"messages": []fiber.Map{
-			{"role": "system", "content": "Extract only supported place-search constraints from the user prompt and current structured state. Never return coordinates, scores, or explanations. Do not invent values. Supported: one reference place; included/excluded country names or continents; annual mean temperature bounds in Celsius; warmer/colder than reference. Put any unsupported request in unsupported and ask for missing reference or ambiguous intent in clarification. Return strict JSON matching the schema."},
+			{"role": "system", "content": "You turn a place-search prompt into filters for a satellite-similarity search. Every search ranks places by how closely their Google AlphaEarth satellite embeddings match one reference place, so \"like\", \"similar to\", \"resembling\" or \"looks like\" X always means X is reference_place: never ask what similarity means and never list it as unsupported. Fields: reference_place (the place as the user names it, e.g. \"Atacama Desert\"); included/excluded country names or continents; annual mean temperature bounds in Celsius; warmer/colder than the reference. current_state holds earlier turns: keep its values unless the prompt changes them, and leave reference_place empty to keep its reference. Put other constraints you cannot express with these fields (rainfall, soil, population, ...) in unsupported. Use clarification only when neither the prompt nor current_state names a reference place. Never return coordinates, scores, or explanations. Do not invent values. Return strict JSON matching the schema."},
 			{"role": "user", "content": string(input)},
 		},
 		"response_format": fiber.Map{"type": "json_schema", "json_schema": fiber.Map{
@@ -524,7 +524,7 @@ func (s *Server) reverseGeocodeMatches(ctx context.Context, matches []similarity
 	return names
 }
 
-func explainSearch(state *searchContext) string {
+func explainSearch(state *searchContext, ignored []string) string {
 	parts := []string{"Ranked by satellite similarity"}
 	if len(state.Countries.Include) > 0 {
 		parts = append(parts, "included countries: "+strings.Join(state.Countries.Include, ", "))
@@ -549,5 +549,23 @@ func explainSearch(state *searchContext) string {
 			parts = append(parts, fmt.Sprintf("annual mean at most %.1f°C", *state.Temperature.MaxC))
 		}
 	}
+	if len(ignored) > 0 {
+		parts = append(parts, "not applied: "+strings.Join(ignored, ", "))
+	}
 	return strings.Join(parts, "; ") + "."
+}
+
+// clarificationFor decides whether to ask instead of searching. Similarity always
+// means AlphaEarth embedding similarity, so once there is a reference place the
+// search runs; anything the model couldn't map to a filter is listed in the
+// explanation rather than blocking. Ambiguous place names are caught later by
+// the geocoder.
+func clarificationFor(parsed parsedSearch, current *searchContext) (string, bool) {
+	if parsed.ReferencePlace != "" || current != nil && current.Reference != nil {
+		return "", false
+	}
+	if parsed.Clarification != "" {
+		return parsed.Clarification, true
+	}
+	return "Which place should the results look like?", true
 }

@@ -91,3 +91,34 @@ func TestValidateSearchStateRejectsInvalidTemperatureRange(t *testing.T) {
 		t.Fatal("expected inverted temperature range to be rejected")
 	}
 }
+
+func TestClarificationOnlyWithoutReferencePlace(t *testing.T) {
+	// "like Atacama" is embedding similarity: a reference place means search,
+	// even if the model also asked something or flagged part of the prompt.
+	withRef := parsedSearch{ReferencePlace: "Atacama Desert", Clarification: "Similar in climate or terrain?", Unsupported: []string{"similar to Atacama"}}
+	if q, ask := clarificationFor(withRef, nil); ask {
+		t.Fatalf("asked %q despite a reference place", q)
+	}
+	// A reference kept from an earlier turn counts too.
+	current := &searchContext{Reference: &searchReference{Name: "Tuscany"}}
+	if _, ask := clarificationFor(parsedSearch{Unsupported: []string{"wine"}}, current); ask {
+		t.Fatal("asked despite a reference in the current context")
+	}
+	if q, ask := clarificationFor(parsedSearch{Clarification: "Which place?"}, nil); !ask || q != "Which place?" {
+		t.Fatalf("got %q, %v; want the model's question", q, ask)
+	}
+	if q, ask := clarificationFor(parsedSearch{}, nil); !ask || q == "" {
+		t.Fatalf("got %q, %v; want a default question", q, ask)
+	}
+}
+
+func TestExplainSearchListsIgnoredConstraints(t *testing.T) {
+	state := &searchContext{Reference: &searchReference{Name: "Tuscany"}}
+	got := explainSearch(state, []string{"good wine", "low rainfall"})
+	if !strings.Contains(got, "not applied: good wine, low rainfall") {
+		t.Fatalf("explanation %q does not list ignored constraints", got)
+	}
+	if got := explainSearch(state, nil); strings.Contains(got, "not applied") {
+		t.Fatalf("explanation %q mentions ignored constraints when there are none", got)
+	}
+}
