@@ -930,6 +930,7 @@ func (s *Server) handleHealth(c *fiber.Ctx) error {
 	return c.JSON(HealthResponse{
 		Status:      "ok",
 		GridLoaded:  s.grid != nil,
+		GridWarm:    s.grid != nil && s.grid.Warm(),
 		GridPixels:  s.grid.PixelCount(),
 		LandPixels:  s.grid.LandPixelCount(),
 		SearchReady: s.searchData != nil,

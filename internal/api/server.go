@@ -107,7 +107,12 @@ func NewServer(g *grid.Grid, database *db.DB, geeClient *gee.Client, cogClient *
 			log.Printf("WARNING: Natural search datasets unavailable: %v", err)
 		} else {
 			s.searchData = data
-			log.Printf("Loaded natural search metadata from %s", metadataPath)
+			log.Printf("Mapped natural search metadata from %s", metadataPath)
+			go func() {
+				start := time.Now()
+				pages := data.Preload()
+				log.Printf("Natural search metadata preloaded: %d pages in %s", pages, time.Since(start).Round(time.Millisecond))
+			}()
 		}
 	} else {
 		log.Printf("Natural search disabled: metadata file %s is missing", metadataPath)

@@ -27,6 +27,11 @@ func main() {
 		g = grid.NewTestGrid(360, 130)
 	}
 
+	// Warm the page cache in the background so the port opens immediately.
+	// After a plain service restart the grid is usually still cached, so this
+	// finishes quickly; after a reboot it reads the land pages from disk.
+	go g.Preload()
+
 	landCount := g.LandPixelCount()
 	dataMB := float64(g.PixelCount()*grid.BandsPerPixel) / (1024 * 1024)
 	log.Printf("Grid ready: %dx%d, %d land pixels (%.1f%%), %.1f MB embeddings",

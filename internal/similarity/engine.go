@@ -94,7 +94,7 @@ func (e *Engine) Compute(query *Query) (*QueryResult, error) {
 		go func(s, e int) {
 			defer wg.Done()
 			for i := s; i < e; i++ {
-				px := landPixels[i]
+				px := int(landPixels[i])
 				dataOff := px * grid.BandsPerPixel
 				pixelEmb := g.Data[dataOff : dataOff+grid.BandsPerPixel]
 
