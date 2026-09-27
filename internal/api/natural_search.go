@@ -437,8 +437,8 @@ type ambiguousPlaceError struct{ names []string }
 
 func (e *ambiguousPlaceError) Error() string { return "ambiguous place" }
 
-// chooseGeonamesResult picks the place a search refers to. GeoNames ranks
-// results by relevance, so the first one wins unless another result with the
+// chooseGeonamesResult picks the place a search refers to: the first exact name
+// match, else GeoNames' top-ranked result. It wins unless another result with the
 // same name is a comparable place: the same kind of feature and a similar
 // population (Springfield, IL vs Springfield, MO). A region such as the
 // Scottish Highlands doesn't compete with small US towns of that name.
@@ -456,10 +456,17 @@ func chooseGeonamesResult(query string, results []geonamesResult) (*geonamesResu
 		return nil, &ambiguousPlaceError{names: geonamesLabels(regions)}
 	}
 
+	// Prefer an exact name match ("Alentejo" over "Viana do Alentejo Municipality").
 	top := results[0]
+	for _, result := range results {
+		if strings.EqualFold(strings.TrimSpace(result.Name), strings.TrimSpace(query)) {
+			top = result
+			break
+		}
+	}
 	rivals := []geonamesResult{top}
-	for _, result := range results[1:] {
-		if strings.EqualFold(strings.TrimSpace(result.Name), strings.TrimSpace(top.Name)) &&
+	for _, result := range results {
+		if result != top && strings.EqualFold(strings.TrimSpace(result.Name), strings.TrimSpace(top.Name)) &&
 			result.FeatureClass == top.FeatureClass && comparablePopulation(result.Population, top.Population) {
 			rivals = append(rivals, result)
 		}

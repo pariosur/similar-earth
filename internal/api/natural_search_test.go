@@ -152,3 +152,13 @@ func TestChooseGeonamesResultPicksCountry(t *testing.T) {
 		t.Fatalf("got %v, %v; want the country", result, err)
 	}
 }
+
+func TestChooseGeonamesResultPrefersExactName(t *testing.T) {
+	results := []geonamesResult{
+		{Name: "Viana do Alentejo Municipality", CountryCode: "PT", FeatureClass: "A", FeatureCode: "ADM2"},
+		{Name: "Alentejo", CountryCode: "PT", FeatureClass: "L", FeatureCode: "RGN"},
+	}
+	if result, err := chooseGeonamesResult("Alentejo", results); err != nil || result.Name != "Alentejo" {
+		t.Fatalf("got %v, %v; want the Alentejo region", result, err)
+	}
+}
