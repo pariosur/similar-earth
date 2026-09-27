@@ -2,11 +2,44 @@ import { useEffect, useRef } from 'react'
 import { postQuery, getQueryStatus, searchPlaces, type NaturalSearchMatch } from '../../api/client'
 import { useSearchStore } from '../../stores/searchStore'
 
-const examples = [
-  'Places like Tuscany, but warmer and outside Europe',
-  'Places like Atacama Desert, only in South America',
-  'Find warmer places like Alentejo, outside Europe',
+// Example prompts, verified against the live search. Each visit shows a few,
+// from different categories, so returning visitors see new ones.
+const examplePool: { label: string; prompt: string }[] = [
+  { label: 'Nature', prompt: 'Find mangrove coasts in Africa' },
+  { label: 'Nature', prompt: 'Glacier country outside Europe' },
+  { label: 'Nature', prompt: 'Volcanic terrain in Asia' },
+  { label: 'Nature', prompt: 'Places like the Okavango Delta, outside Africa' },
+  { label: 'Nature', prompt: 'Places like Salar de Uyuni, outside South America' },
+  { label: 'Nature', prompt: 'Places like the Sundarbans, outside Asia' },
+  { label: 'Agriculture', prompt: 'Rice-growing land in Africa' },
+  { label: 'Agriculture', prompt: 'Coffee country in Asia, but colder' },
+  { label: 'Agriculture', prompt: 'Wine country outside Europe, but colder' },
+  { label: 'Agriculture', prompt: 'Places like Darjeeling, outside Asia' },
+  { label: 'Agriculture', prompt: 'Places like Mendoza, outside South America' },
+  { label: 'Agriculture', prompt: 'Places like Sidama, Ethiopia, outside Africa' },
+  { label: 'Energy', prompt: 'Solar-farm terrain in Africa' },
+  { label: 'Energy', prompt: 'Places like the Atacama Desert, only in Asia' },
+  { label: 'Climate', prompt: 'Places like Tuscany, but warmer and outside Europe' },
+  { label: 'Climate', prompt: 'Places like Hokkaido, but warmer' },
+  { label: 'Travel', prompt: 'Places like Bali, outside Indonesia' },
+  { label: 'Travel', prompt: 'Places like Patagonia, only in Asia' },
+  { label: 'Travel', prompt: 'Places like the Swiss Alps, only in Asia' },
 ]
+
+function pickExamples(count: number) {
+  const shuffled = [...examplePool].sort(() => Math.random() - 0.5)
+  const picked: typeof examplePool = []
+  for (const example of shuffled) {
+    if (picked.length < count && !picked.some((p) => p.label === example.label)) picked.push(example)
+  }
+  for (const example of shuffled) {
+    if (picked.length < count && !picked.includes(example)) picked.push(example)
+  }
+  return picked
+}
+
+// Picked once per page load, so switching tabs doesn't reshuffle them.
+const examples = pickExamples(4)
 
 export function NaturalSearch({
   onFlyTo,
@@ -113,7 +146,12 @@ export function NaturalSearch({
       {!state.matches.length && !state.clarification && (
         <div className="space-y-2">
           <p className="text-[10px] font-bold uppercase tracking-wider text-fg-40">Try an example</p>
-          {examples.map((example) => <button key={example} onClick={() => { update({ prompt: example }); void search(example) }} className="block w-full border border-fg-08 px-3 py-2 text-left text-xs text-fg-70 hover:border-gold/40">{example}</button>)}
+          {examples.map(({ label, prompt }) => (
+            <button key={prompt} onClick={() => { update({ prompt }); void search(prompt) }} className="block w-full border border-fg-08 px-3 py-2 text-left text-xs text-fg-70 hover:border-gold/40">
+              <span className="mr-2 text-[9px] font-bold uppercase tracking-wider text-gold-text">{label}</span>
+              {prompt}
+            </button>
+          ))}
         </div>
       )}
       {state.loading && <p role="status" className="text-xs text-fg-50">Searching places and applying your filters…</p>}
