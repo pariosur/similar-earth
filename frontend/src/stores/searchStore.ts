@@ -45,6 +45,32 @@ function initialMapMode(): MapMode {
   return params.has('map') || params.has('s') || params.has('query') ? 'gallery' : 'search'
 }
 
+// Map links (?s=, ?map=, ?query=) open the gallery, so they must not linger in
+// the address bar while Find places is shown: a reload would land on the old map.
+const MAP_PARAMS = ['s', 'map', 'query']
+let stashedMapParams = ''
+
+function syncUrlWithMode(mode: MapMode) {
+  const url = new URL(window.location.href)
+  if (mode === 'search') {
+    const kept = new URLSearchParams()
+    for (const param of MAP_PARAMS) {
+      const value = url.searchParams.get(param)
+      if (value !== null) {
+        kept.set(param, value)
+        url.searchParams.delete(param)
+      }
+    }
+    if (kept.toString()) stashedMapParams = kept.toString()
+  } else if (stashedMapParams) {
+    for (const [param, value] of new URLSearchParams(stashedMapParams)) {
+      if (!url.searchParams.has(param)) url.searchParams.set(param, value)
+    }
+    stashedMapParams = ''
+  }
+  if (url.href !== window.location.href) window.history.replaceState(window.history.state, '', url)
+}
+
 const emptyResults = {
   matches: [],
   reference: null,
@@ -66,7 +92,10 @@ export const useSearchStore = create<SearchState>((set) => ({
   exploring: null,
   ...emptyResults,
 
-  setMapMode: (mapMode) => set({ mapMode }),
+  setMapMode: (mapMode) => {
+    syncUrlWithMode(mapMode)
+    set({ mapMode })
+  },
   update: (patch) => set(patch),
   reset: () => set({ prompt: '', ...emptyResults }),
 }))
