@@ -555,7 +555,8 @@ func chooseGeonamesResult(query string, results []geonamesResult) (*geonamesResu
 	rivals := []geonamesResult{top}
 	for _, result := range results {
 		if result != top && strings.EqualFold(strings.TrimSpace(result.Name), strings.TrimSpace(top.Name)) &&
-			result.FeatureClass == top.FeatureClass && comparablePopulation(result.Population, top.Population) {
+			result.FeatureClass == top.FeatureClass && comparablePopulation(result.Population, top.Population) &&
+			geonamesDistanceKm(result, top) > distinctPlaceKm {
 			rivals = append(rivals, result)
 		}
 	}
@@ -563,6 +564,30 @@ func chooseGeonamesResult(query string, results []geonamesResult) (*geonamesResu
 		return nil, &ambiguousPlaceError{names: geonamesLabels(rivals)}
 	}
 	return &top, nil
+}
+
+// Same-named results closer than this are one place listed several times
+// (the Sundarbans as a region, a district and a park), not an ambiguity.
+const distinctPlaceKm = 100
+
+func geonamesDistanceKm(a, b geonamesResult) float64 {
+	var latA, lngA, latB, lngB float64
+	if _, err := fmt.Sscan(a.Lat, &latA); err != nil {
+		return math.Inf(1)
+	}
+	if _, err := fmt.Sscan(a.Lng, &lngA); err != nil {
+		return math.Inf(1)
+	}
+	if _, err := fmt.Sscan(b.Lat, &latB); err != nil {
+		return math.Inf(1)
+	}
+	if _, err := fmt.Sscan(b.Lng, &lngB); err != nil {
+		return math.Inf(1)
+	}
+	toRad := math.Pi / 180
+	dLat, dLng := (latB-latA)*toRad, (lngB-lngA)*toRad
+	h := math.Sin(dLat/2)*math.Sin(dLat/2) + math.Cos(latA*toRad)*math.Cos(latB*toRad)*math.Sin(dLng/2)*math.Sin(dLng/2)
+	return 2 * 6371 * math.Asin(math.Min(1, math.Sqrt(h)))
 }
 
 // comparablePopulation reports whether two places are within 4x of each other

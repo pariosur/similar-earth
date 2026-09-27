@@ -57,8 +57,8 @@ func TestSearchContextDoesNotAcceptClientCoordinates(t *testing.T) {
 
 func TestChooseGeonamesResultClarifiesAmbiguousPlaces(t *testing.T) {
 	results := []geonamesResult{
-		{Name: "Springfield", CountryCode: "US", CountryName: "United States", AdminName1: "Illinois"},
-		{Name: "Springfield", CountryCode: "US", CountryName: "United States", AdminName1: "Missouri"},
+		{Name: "Springfield", CountryCode: "US", CountryName: "United States", AdminName1: "Illinois", Lat: "39.80", Lng: "-89.64"},
+		{Name: "Springfield", CountryCode: "US", CountryName: "United States", AdminName1: "Missouri", Lat: "37.21", Lng: "-93.29"},
 	}
 	if _, err := chooseGeonamesResult("Springfield", results); err == nil {
 		t.Fatal("expected ambiguity to require clarification")
@@ -229,5 +229,16 @@ func TestNameMatchesOffline(t *testing.T) {
 	}
 	if !strings.HasPrefix(names[1], "59 km from Hualañé") {
 		t.Fatalf("far match named %q, want a distance to the nearest town", names[1])
+	}
+}
+
+func TestChooseGeonamesResultMergesNearbyDuplicates(t *testing.T) {
+	results := []geonamesResult{
+		{Name: "Sundarbans", CountryCode: "BD", FeatureClass: "L", Lat: "21.95", Lng: "89.18"},
+		{Name: "Sundarbans", CountryCode: "BD", AdminName1: "Khulna Division", FeatureClass: "L", Lat: "22.10", Lng: "89.40"},
+		{Name: "Sundarbans", CountryCode: "BD", AdminName1: "Khulna Division", FeatureClass: "L", Lat: "21.80", Lng: "89.60"},
+	}
+	if result, err := chooseGeonamesResult("Sundarbans", results); err != nil || result.Lat != "21.95" {
+		t.Fatalf("got %v, %v; want the first Sundarbans", result, err)
 	}
 }
