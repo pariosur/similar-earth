@@ -7,26 +7,29 @@ import { LoadingOverlay } from './components/ui/LoadingOverlay'
 import { useIsMobile } from './hooks/useIsMobile'
 import { useInitializeMap } from './hooks/useInitializeMap'
 import { useQueryStore } from './stores/queryStore'
+import { useSearchStore } from './stores/searchStore'
 
 export function App() {
   const isMobile = useIsMobile()
   const createMode = useQueryStore((s) => s.createMode)
   const activeMapName = useQueryStore((s) => s.activeMapName)
+  const isSearch = useSearchStore((s) => s.mapMode) === 'search'
 
-  // Dynamic page title + OG meta
+  // Dynamic page title + OG meta (the gallery map's name only while it's on screen)
   useEffect(() => {
-    const title = activeMapName
-      ? `${activeMapName} — Similar Earth`
+    const mapName = isSearch ? null : activeMapName
+    const title = mapName
+      ? `${mapName} — Similar Earth`
       : 'Similar Earth — Global Similarity Maps'
-    const desc = activeMapName
-      ? `Where else on Earth looks like ${activeMapName}? Satellite similarity search.`
+    const desc = mapName
+      ? `Where else on Earth looks like ${mapName}? Satellite similarity search.`
       : 'Where else on Earth looks like this? Search the entire planet by satellite similarity.'
     document.title = title
     document.querySelector('meta[property="og:title"]')?.setAttribute('content', title)
     document.querySelector('meta[property="og:description"]')?.setAttribute('content', desc)
     document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', title)
     document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', desc)
-  }, [activeMapName])
+  }, [activeMapName, isSearch])
   const [sidebarOpen, setSidebarOpen] = useState(() => window.innerWidth >= 768)
   const flyToRef = useRef<(lat: number, lng: number) => void>(() => {})
 
@@ -88,7 +91,7 @@ export function App() {
           )}
           <LoadingOverlay />
         </div>
-        <ExploreDrawer onFlyTo={handleFlyTo} />
+        {!isSearch && <ExploreDrawer onFlyTo={handleFlyTo} />}
       </div>
     </div>
   )

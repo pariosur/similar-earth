@@ -1,6 +1,7 @@
 import { useRef, useEffect, useCallback, useState } from 'react'
 import maplibregl from 'maplibre-gl'
 import { useQueryStore } from '../stores/queryStore'
+import { useSearchStore } from '../stores/searchStore'
 import { useThemeStore, type ResolvedTheme, type Basemap } from '../stores/themeStore'
 
 const DARK_STYLE = 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json'
@@ -73,6 +74,8 @@ export function useMapInit({ onFlyToReady }: UseMapInitOptions) {
   const mapContainerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<maplibregl.Map | null>(null)
   const [mapReady, setMapReady] = useState(false)
+  // The map instance as state, so components can render with it (refs can't be read during render)
+  const [mapInstance, setMapInstance] = useState<maplibregl.Map | null>(null)
   const [zoom, setZoom] = useState(2.5)
 
   const resolvedTheme = useThemeStore((s) => s.resolved)
@@ -108,6 +111,11 @@ export function useMapInit({ onFlyToReady }: UseMapInitOptions) {
         if (!createMode) setAddPinMode(false)
         return
       }
+      // Find places has no gallery layer to inspect; a click just clears the pick.
+      if (useSearchStore.getState().mapMode === 'search') {
+        useSearchStore.getState().update({ selected: null })
+        return
+      }
       // If something was selected, just clear it. Otherwise inspect the point.
       const { selectedPinIndex, selectedDiscoveryIndex } = useQueryStore.getState()
       if (selectedPinIndex !== null || selectedDiscoveryIndex !== null) {
@@ -138,6 +146,7 @@ export function useMapInit({ onFlyToReady }: UseMapInitOptions) {
     map.on('load', () => {
       styleReadyRef.current = true
       applyBasemap(map, useThemeStore.getState().basemap)
+      setMapInstance(map)
       setMapReady(true)
     });
     (window as any).__map = map
@@ -209,5 +218,5 @@ export function useMapInit({ onFlyToReady }: UseMapInitOptions) {
     }
   }, [resolvedTheme, basemap])
 
-  return { mapContainerRef, mapRef, mapReady, zoom, handleFlyTo }
+  return { mapContainerRef, mapRef, map: mapReady ? mapInstance : null, zoom, handleFlyTo }
 }

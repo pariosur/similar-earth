@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import type maplibregl from 'maplibre-gl'
 import { useQueryStore } from '../../stores/queryStore'
+import { useSearchStore } from '../../stores/searchStore'
 
 const SOURCE_ID = 'similarity-tiles'
 const LAYER_ID = 'similarity-layer'
@@ -12,8 +13,14 @@ interface HeatmapLayerProps {
 }
 
 export function HeatmapLayer({ map }: HeatmapLayerProps) {
-  const tileUrl = useQueryStore((s) => s.tileUrl)
-  const hdTileUrl = useQueryStore((s) => s.hdTileUrl)
+  // Find places shows only its own Explore heatmap (2 km, no HD); the gallery
+  // map's layers come back when switching to Maps.
+  const isSearch = useSearchStore((s) => s.mapMode) === 'search'
+  const searchTileUrl = useSearchStore((s) => s.explored?.tileUrl ?? null)
+  const galleryTileUrl = useQueryStore((s) => s.tileUrl)
+  const galleryHdTileUrl = useQueryStore((s) => s.hdTileUrl)
+  const tileUrl = isSearch ? searchTileUrl : galleryTileUrl
+  const hdTileUrl = isSearch ? null : galleryHdTileUrl
   const hdState = useQueryStore((s) => s.hdState)
   const setHdState = useQueryStore((s) => s.setHdState)
   const prevTileUrl = useRef<string | null>(null)

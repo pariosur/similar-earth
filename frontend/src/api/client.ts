@@ -134,8 +134,15 @@ export interface NaturalSearchMatch {
   temperature_difference_c?: number
 }
 
+export interface NaturalSearchReference {
+  name: string
+  lat: number
+  lng: number
+}
+
 export interface NaturalSearchResponse {
   matches?: NaturalSearchMatch[]
+  reference?: NaturalSearchReference
   clarification?: string
   context?: NaturalSearchContext
   unsupported?: string[]

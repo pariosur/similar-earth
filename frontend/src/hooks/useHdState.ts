@@ -1,11 +1,15 @@
 import { useEffect, useCallback, useRef } from 'react'
 import maplibregl from 'maplibre-gl'
 import { useQueryStore } from '../stores/queryStore'
+import { useSearchStore } from '../stores/searchStore'
 
 const HD_ZOOM = 10
 
 export function useHdState(mapRef: React.RefObject<maplibregl.Map | null>, zoom: number) {
-  const tileUrl = useQueryStore((s) => s.tileUrl)
+  // HD belongs to gallery maps; zooming in Find places must not trigger it.
+  const isSearch = useSearchStore((s) => s.mapMode) === 'search'
+  const galleryTileUrl = useQueryStore((s) => s.tileUrl)
+  const tileUrl = isSearch ? null : galleryTileUrl
   const activeMapSlug = useQueryStore((s) => s.activeMapSlug)
   const activeQueryId = useQueryStore((s) => s.activeQueryId)
   const hdState = useQueryStore((s) => s.hdState)

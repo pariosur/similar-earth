@@ -1,16 +1,6 @@
-import { postQuery, getQueryStatus, searchPlaces, type NaturalSearchMatch, type NaturalSearchContext } from '../../api/client'
-import { useQueryStore } from '../../stores/queryStore'
-
-export interface NaturalSearchState {
-  prompt: string
-  matches: NaturalSearchMatch[]
-  clarification: string
-  explanation: string
-  error: string
-  loading: boolean
-  exploring: number | null
-  context?: NaturalSearchContext
-}
+import { useEffect, useRef } from 'react'
+import { postQuery, getQueryStatus, searchPlaces, type NaturalSearchMatch } from '../../api/client'
+import { useSearchStore } from '../../stores/searchStore'
 
 const examples = [
   'Places like Tuscany, but warmer and outside Europe',
@@ -19,33 +9,38 @@ const examples = [
 ]
 
 export function NaturalSearch({
-  state,
-  setState,
   onFlyTo,
-  onBack,
+  onResults,
 }: {
-  state: NaturalSearchState
-  setState: React.Dispatch<React.SetStateAction<NaturalSearchState>>
   onFlyTo?: (lat: number, lng: number) => void
-  onBack: () => void
+  // Called when a search returns matches (mobile collapses the sheet to show the map)
+  onResults?: () => void
 }) {
-  const update = (patch: Partial<NaturalSearchState>) => setState((current) => ({ ...current, ...patch }))
+  const state = useSearchStore()
+  const { update } = state
+  const listRef = useRef<HTMLDivElement>(null)
 
-  const resetSearch = () => update({
-    prompt: '', matches: [], clarification: '', explanation: '', context: undefined, error: '',
-  })
+  // Scroll to the card whose map marker was clicked
+  useEffect(() => {
+    if (state.selected === null) return
+    listRef.current?.querySelector(`[data-result="${state.selected}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+  }, [state.selected])
 
   const search = async (text = state.prompt) => {
     if (!text.trim() || state.loading) return
-    update({ prompt: text, loading: true, error: '', matches: [], clarification: '', explanation: '' })
+    const context = state.context
+    update({ prompt: text, loading: true, error: '', matches: [], reference: null, clarification: '', explanation: '', explored: null, hovered: null, selected: null })
     try {
-      const result = await searchPlaces(text, state.context)
+      const result = await searchPlaces(text, context)
+      const matches = result.matches || []
       update({
-        matches: result.matches || [],
+        matches,
+        reference: result.reference || null,
         clarification: result.clarification || result.unsupported?.join(' ') || '',
         explanation: result.explanation || '',
         context: result.context,
       })
+      if (matches.length) onResults?.()
     } catch (e) {
       update({ error: e instanceof Error ? e.message : 'Search failed. Try again.' })
     } finally {
@@ -53,7 +48,12 @@ export function NaturalSearch({
     }
   }
 
+  // Toggle a 2 km similarity heatmap for one result, shown in this view.
   const explore = async (match: NaturalSearchMatch, index: number) => {
+    if (state.explored?.index === index) {
+      update({ explored: null })
+      return
+    }
     update({ exploring: index, error: '' })
     try {
       const response = await postQuery([{ lat: match.lat, lng: match.lng, label: match.name }])
@@ -61,10 +61,7 @@ export function NaturalSearch({
       while (Date.now() < deadline) {
         const status = await getQueryStatus(response.id)
         if (status.status === 'completed') {
-          useQueryStore.getState().setQuery(response.id, response.tile_url)
-          useQueryStore.setState({ pins: [{ lat: match.lat, lng: match.lng, label: match.name }], hdState: 'off', hdTileUrl: null })
-          onFlyTo?.(match.lat, match.lng)
-          onBack()
+          update({ explored: { index, name: match.name, queryId: response.id, tileUrl: response.tile_url } })
           return
         }
         if (status.status === 'failed') throw new Error('Similarity scan failed. Try again.')
@@ -78,6 +75,11 @@ export function NaturalSearch({
     }
   }
 
+  const viewOnMap = (match: NaturalSearchMatch, index: number) => {
+    update({ selected: index })
+    onFlyTo?.(match.lat, match.lng)
+  }
+
   return (
     <section className="space-y-4">
       <div className="flex items-center justify-between">
@@ -85,10 +87,7 @@ export function NaturalSearch({
           <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-gold">Search Earth</p>
           <h2 className="text-sm font-semibold text-fg mt-1">Describe a place to find</h2>
         </div>
-        <div className="flex items-center gap-3">
-          {state.context && <button onClick={resetSearch} className="text-[10px] font-bold uppercase tracking-wider text-fg-50 hover:text-gold">New search</button>}
-          <button onClick={onBack} className="text-[10px] font-bold uppercase tracking-wider text-fg-50 hover:text-gold">Gallery</button>
-        </div>
+        {state.context && <button onClick={state.reset} className="text-[10px] font-bold uppercase tracking-wider text-fg-50 hover:text-gold">New search</button>}
       </div>
       <form onSubmit={(e) => { e.preventDefault(); void search() }} className="space-y-2">
         <textarea
@@ -107,7 +106,7 @@ export function NaturalSearch({
           </button>
         </div>
       </form>
-      <p className="text-[11px] text-fg-40">Searching and viewing results leave your current map unchanged. Explore starts a separate 2 km similarity map, without 10 m refinement.</p>
+      <p className="text-[11px] text-fg-40">Matches are numbered on the map. Show heatmap scans the planet for places like one result (2 km).</p>
       <p className="text-[10px] text-fg-30">Place names: GeoNames. Annual mean temperature (1991–2020): Copernicus Climate Change Service.</p>
       {!state.matches.length && !state.clarification && (
         <div className="space-y-2">
@@ -121,18 +120,50 @@ export function NaturalSearch({
       {!!state.matches.length && <>
         <div className="flex items-center justify-between border-t border-fg-08 pt-3">
           <p className="text-[10px] font-bold uppercase tracking-wider text-fg-40">{state.matches.length} matches</p>
-          <button onClick={resetSearch} className="text-[10px] text-fg-40 hover:text-fg">Clear</button>
+          <button onClick={state.reset} className="text-[10px] text-fg-40 hover:text-fg">Clear</button>
         </div>
         {state.explanation && <p className="text-xs text-fg-50">{state.explanation}</p>}
-        <div className="space-y-2">
-          {state.matches.map((match, i) => <article key={`${match.lat},${match.lng}`} className="border border-fg-08 bg-fg-03 p-3">
-            <div className="flex justify-between gap-2"><h3 className="text-xs font-semibold text-fg">{match.name}</h3><span className="shrink-0 text-xs text-gold">{Math.round(match.score * 100)}%</span></div>
-            {match.temperature_difference_c != null && <p className="mt-1 text-[11px] text-fg-50">{match.temperature_difference_c > 0 ? '+' : ''}{match.temperature_difference_c.toFixed(1)}°C vs reference</p>}
-            <div className="mt-3 flex gap-2">
-              <button onClick={() => onFlyTo?.(match.lat, match.lng)} className="border border-fg-15 px-2 py-1.5 text-[10px] text-fg-70 hover:text-gold">View on map</button>
-              <button disabled={state.exploring !== null} onClick={() => void explore(match, i)} className="border border-gold/40 bg-gold/10 px-2 py-1.5 text-[10px] text-gold disabled:opacity-50">{state.exploring === i ? 'Scanning…' : 'Explore similar places'}</button>
-            </div>
-          </article>)}
+        {state.reference && (
+          <button
+            onClick={() => onFlyTo?.(state.reference!.lat, state.reference!.lng)}
+            className="flex w-full items-center gap-2 border border-gold/20 bg-gold/5 px-3 py-2 text-left text-xs text-fg-70 hover:border-gold/40"
+          >
+            <span className="material-symbols-outlined text-sm text-gold">star</span>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-fg-40">Reference</span>
+            <span className="truncate font-semibold text-fg">{state.reference.name}</span>
+          </button>
+        )}
+        <div ref={listRef} className="space-y-2">
+          {state.matches.map((match, i) => {
+            const active = state.hovered === i || state.selected === i
+            const explored = state.explored?.index === i
+            return <article
+              key={`${match.lat},${match.lng}`}
+              data-result={i}
+              onMouseEnter={() => update({ hovered: i })}
+              onMouseLeave={() => update({ hovered: null })}
+              className={`border p-3 transition-colors ${active || explored ? 'border-gold/50 bg-gold/5' : 'border-fg-08 bg-fg-03'}`}
+            >
+              <div className="flex justify-between gap-2">
+                <h3 className="flex items-start gap-2 text-xs font-semibold text-fg">
+                  <span className="search-result-badge">{i + 1}</span>
+                  <span>{match.name}</span>
+                </h3>
+                <span className="shrink-0 text-xs text-gold">{Math.round(match.score * 100)}%</span>
+              </div>
+              {match.temperature_difference_c != null && <p className="mt-1 pl-7 text-[11px] text-fg-50">{match.temperature_difference_c > 0 ? '+' : ''}{match.temperature_difference_c.toFixed(1)}°C vs reference</p>}
+              <div className="mt-3 flex gap-2 pl-7">
+                <button onClick={() => viewOnMap(match, i)} className="border border-fg-15 px-2 py-1.5 text-[10px] text-fg-70 hover:text-gold">View on map</button>
+                <button
+                  disabled={state.exploring !== null}
+                  onClick={() => void explore(match, i)}
+                  className="border border-gold/40 bg-gold/10 px-2 py-1.5 text-[10px] text-gold disabled:opacity-50"
+                >
+                  {state.exploring === i ? 'Scanning…' : explored ? 'Hide heatmap' : 'Show heatmap'}
+                </button>
+              </div>
+            </article>
+          })}
         </div>
       </>}
     </section>

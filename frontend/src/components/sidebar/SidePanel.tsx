@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { MapGallery } from './MapGallery'
-import { NaturalSearch, type NaturalSearchState } from './NaturalSearch'
+import { NaturalSearch } from './NaturalSearch'
 import { CreateMap } from './CreateMap'
 import { PointInspection } from './PointInspection'
 import { MapChipStrip } from '../map/MapChipStrip'
@@ -8,6 +8,7 @@ import { DiscoveryChipStrip } from '../map/DiscoveryChipStrip'
 import { PinChipStrip } from '../map/PinChipStrip'
 import { useDiscoveries } from '../../hooks/useDiscoveries'
 import { useQueryStore } from '../../stores/queryStore'
+import { useSearchStore } from '../../stores/searchStore'
 import { useThemeStore } from '../../stores/themeStore'
 import { useIsMobile } from '../../hooks/useIsMobile'
 
@@ -21,10 +22,19 @@ interface SidePanelProps {
 }
 
 export function SidePanel({ open, onToggle, onFlyTo, onCollapse }: SidePanelProps) {
-  const [tab, setTab] = useState<Tab>('search')
-  const [naturalSearch, setNaturalSearch] = useState<NaturalSearchState>({
-    prompt: '', matches: [], clarification: '', explanation: '', error: '', loading: false, exploring: null,
-  })
+  const [tab, setTabState] = useState<Tab>(() => useSearchStore.getState().mapMode === 'search' ? 'search' : 'browse')
+  // The map follows the tab: Find places shows search results, Maps/Create the
+  // gallery. How it works keeps whatever the map was showing.
+  const setTab = (next: Tab) => {
+    setTabState(next)
+    if (next === 'search') {
+      useSearchStore.getState().setMapMode('search')
+      useQueryStore.getState().setCreateMode(false)
+    } else if (next !== 'about') {
+      useSearchStore.getState().setMapMode('gallery')
+    }
+  }
+  const lastTab = () => (useSearchStore.getState().mapMode === 'search' ? 'search' : 'browse')
   const themePreference = useThemeStore((s) => s.preference)
   const setTheme = useThemeStore((s) => s.setTheme)
   const isMobile = useIsMobile()
@@ -77,7 +87,7 @@ export function SidePanel({ open, onToggle, onFlyTo, onCollapse }: SidePanelProp
               <span className="material-symbols-outlined text-base">{themeIcon}</span>
             </button>
             <button
-              onClick={() => setTab(tab === 'about' ? 'browse' : 'about')}
+              onClick={() => setTab(tab === 'about' ? lastTab() : 'about')}
               className={`px-2 h-7 flex items-center transition-colors text-[10px] font-bold uppercase tracking-wider ${
                 tab === 'about' ? 'text-gold' : 'text-fg-30 hover:text-fg-60'
               }`}
@@ -104,10 +114,7 @@ export function SidePanel({ open, onToggle, onFlyTo, onCollapse }: SidePanelProp
         {open && tab !== 'about' && (
           <nav className={`flex ${isMobile ? 'mt-3' : 'mt-5'} border-b border-fg-08 ${isMobile ? '-mx-4 px-4' : '-mx-8 px-8'}`}>
             <button
-              onClick={() => {
-                setTab('search')
-                if (isMobile) useQueryStore.getState().setCreateMode(false)
-              }}
+              onClick={() => setTab('search')}
               className={`flex items-center gap-2 py-3 text-[11px] font-bold uppercase tracking-[0.15em] transition-all border-b-2 mr-6 ${
                 tab === 'search'
                   ? 'text-gold border-gold'
@@ -158,14 +165,14 @@ export function SidePanel({ open, onToggle, onFlyTo, onCollapse }: SidePanelProp
       {open && (
         <>
           <div className={`flex-1 overflow-y-auto ${isMobile ? 'px-4 py-4' : 'px-8 py-6'}`}>
-            {tab === 'about' && <HowItWorks onClose={() => setTab('browse')} onCreateClick={() => { setTab('create'); if (isMobile) { useQueryStore.getState().setCreateMode(true); onCollapse?.() } }} />}
-            {tab === 'search' && <NaturalSearch state={naturalSearch} setState={setNaturalSearch} onFlyTo={onFlyTo} onBack={() => setTab('browse')} />}
+            {tab === 'about' && <HowItWorks onClose={() => setTab(lastTab())} onCreateClick={() => { setTab('create'); if (isMobile) { useQueryStore.getState().setCreateMode(true); onCollapse?.() } }} />}
+            {tab === 'search' && <NaturalSearch onFlyTo={onFlyTo} onResults={isMobile ? onCollapse : undefined} />}
             {tab === 'browse' && <MapGallery />}
             {tab === 'create' && <CreateMap onPublished={() => setTab('browse')} />}
           </div>
 
-          {/* Point inspection */}
-          <PointInspection />
+          {/* Point inspection (gallery maps only) */}
+          {tab !== 'search' && <PointInspection />}
 
           {/* Attribution */}
           <div className={`${isMobile ? 'px-4' : 'px-8'} py-3 border-t border-fg-08 shrink-0`}>
@@ -277,6 +284,59 @@ function HowItWorks({ onClose, onCreateClick }: { onClose: () => void; onCreateC
 }
 
 function MobileCollapsedHeader({ onExpand, onFlyTo }: { onExpand: () => void; onFlyTo?: (lat: number, lng: number) => void }) {
+  const isSearch = useSearchStore((s) => s.mapMode) === 'search'
+  if (isSearch) return <MobileSearchHeader onExpand={onExpand} onFlyTo={onFlyTo} />
+  return <MobileGalleryHeader onExpand={onExpand} onFlyTo={onFlyTo} />
+}
+
+function MobileSearchHeader({ onExpand, onFlyTo }: { onExpand: () => void; onFlyTo?: (lat: number, lng: number) => void }) {
+  const matches = useSearchStore((s) => s.matches)
+  const referenceName = useSearchStore((s) => s.reference?.name || s.context?.reference?.name)
+  const selected = useSearchStore((s) => s.selected)
+  const update = useSearchStore((s) => s.update)
+
+  return (
+    <div className="flex flex-col shrink-0" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+      <div className="flex items-center justify-between px-4 pt-3 pb-1 shrink-0 gap-2">
+        <button onClick={onExpand} className="text-[12px] font-bold text-fg truncate text-left">
+          {matches.length && referenceName ? (
+            <>Places like <span className="text-gold">{referenceName}</span> · {matches.length} matches</>
+          ) : (
+            'Describe a place to find'
+          )}
+        </button>
+        <button
+          onClick={onExpand}
+          className="w-8 h-8 flex items-center justify-center text-fg-30 hover:text-fg-60 transition-colors shrink-0 -mr-1"
+          title="Find places"
+        >
+          <span className="material-symbols-outlined text-lg">expand_less</span>
+        </button>
+      </div>
+      {matches.length > 0 && (
+        <div className="flex items-center gap-1.5 overflow-x-auto px-4 py-2" style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}>
+          {matches.map((m, i) => (
+            <button
+              key={`${m.lat},${m.lng}`}
+              onClick={() => { update({ selected: i }); onFlyTo?.(m.lat, m.lng) }}
+              className={`flex items-center gap-1.5 px-2.5 py-1 shrink-0 text-[10px] font-medium ${selected === i ? 'text-white' : 'text-fg-60'}`}
+              style={{
+                background: selected === i ? 'var(--crimson)' : 'var(--fg-05)',
+                border: '1px solid',
+                borderColor: selected === i ? 'var(--crimson)' : 'var(--fg-08)',
+              }}
+            >
+              <span className="search-result-badge">{i + 1}</span>
+              <span className="whitespace-nowrap">{m.name}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function MobileGalleryHeader({ onExpand, onFlyTo }: { onExpand: () => void; onFlyTo?: (lat: number, lng: number) => void }) {
   const activeMapName = useQueryStore((s) => s.activeMapName)
   const pins = useQueryStore((s) => s.pins)
   const { discoveries } = useDiscoveries()

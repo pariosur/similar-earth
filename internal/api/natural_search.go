@@ -208,7 +208,10 @@ func (s *Server) handleNaturalSearch(c *fiber.Ctx) error {
 		}
 		out = append(out, item)
 	}
-	return c.JSON(fiber.Map{"matches": out, "context": state, "explanation": explainSearch(state)})
+	// The context never carries coordinates (clients can't inject them), so the
+	// geocoded reference is returned separately for drawing it on the map.
+	reference := fiber.Map{"name": state.Reference.Name, "lat": state.Reference.Lat, "lng": state.Reference.Lng}
+	return c.JSON(fiber.Map{"matches": out, "reference": reference, "context": state, "explanation": explainSearch(state)})
 }
 
 func parseSearchPrompt(ctx context.Context, prompt string, state *searchContext) (parsedSearch, error) {
